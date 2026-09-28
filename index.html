@@ -132,7 +132,7 @@
             align-items: center;
             justify-content: center;
             border: 2px solid var(--bg-color);
-            pointer-events: none; /* ← CORREÇÃO PRINCIPAL: agora o botão é clicável */
+            pointer-events: none;
             z-index: 6;
         }
 
@@ -530,10 +530,59 @@
 
         .cart-total {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 18px; font-weight: 700; margin-bottom: 20px;
+            font-size: 18px; font-weight: 700; margin-bottom: 16px;
             padding-top: 16px; border-top: 1px dashed var(--border-color);
             color: var(--text-primary);
         }
+
+        /* Novos botões de pagamento no carrinho */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .btn-use-balance {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-use-balance:active { transform: scale(0.98); }
+        .btn-use-balance:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background-color: var(--text-secondary);
+        }
+
+        .btn-pay-pix {
+            background-color: var(--primary-color);
+            color: var(--primary-contrast);
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-pay-pix:active { transform: scale(0.98); }
 
         .pix-view { display: none; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
         .pix-view.active { display: flex; }
@@ -957,19 +1006,50 @@
             color: var(--success-color);
         }
 
+        /* Prévia maior + botão de lixeira */
         .preview-row {
-            display: flex; gap: 10px; margin-bottom: 16px;
+            display: flex; gap: 12px; margin-bottom: 18px;
         }
         .preview-box {
-            flex: 1; background: var(--surface-color);
+            flex: 1;
+            background: var(--surface-color);
             border: 1px solid var(--border-color);
-            border-radius: 12px; overflow: hidden;
-            aspect-ratio: 1.4; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; color: var(--text-secondary);
+            border-radius: 14px;
+            overflow: hidden;
+            aspect-ratio: 1.25;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-height: 130px;
         }
         .preview-box img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+        .preview-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            background: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            z-index: 5;
+            transition: transform 0.15s;
+        }
+        .preview-delete:active { transform: scale(0.9); }
+        .preview-delete svg { width: 16px; height: 16px; }
 
         .verifying-box { text-align: center; padding: 40px 10px; }
         .spinner {
@@ -1032,7 +1112,7 @@
                 <span class="balance-label">Saldo disponível</span>
                 <span class="balance-amount" id="userBalance">R$ 500,00</span>
             </div>
-            <button class="btn-add-balance" onclick="openBalanceModal()">
+            <button class="btn-add-balance" onclick="openBalanceModal(false)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Adicionar saldo
             </button>
@@ -1206,7 +1286,18 @@
                 <span>Total:</span>
                 <span id="cartTotal">R$ 0,00</span>
             </div>
-            <button class="btn-primary" id="checkoutBtn" onclick="checkout()">Finalizar Compra</button>
+
+            <!-- Opções de pagamento -->
+            <div class="payment-options" id="paymentOptions" style="display:none;">
+                <button class="btn-use-balance" id="btnUseBalance" onclick="payWithBalance()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    Usar Saldo da Carteira
+                </button>
+                <button class="btn-pay-pix" onclick="payWithPix()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+                    Pagar com PIX
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1251,7 +1342,7 @@
                         <li>Copie o código abaixo e cole no campo indicado pelo banco.</li>
                         <li>Confirme o valor e finalize o pagamento.</li>
                     </ol>
-                    <p style="margin-top: 8px; font-size: 11px; color: var(--success-color); font-weight: 600;">O saldo será creditado automaticamente após a confirmação.</p>
+                    <p style="margin-top: 8px; font-size: 11px; color: var(--success-color); font-weight: 600;" id="pixCreditNote">O saldo será creditado automaticamente após a confirmação.</p>
                 </div>
 
                 <div class="copy-box">
@@ -1315,8 +1406,12 @@
                 <input type="file" id="rgInput" accept="image/*" style="display:none" onchange="handleRgUpload(event)">
 
                 <div class="preview-row" id="previewRow" style="display:none;">
-                    <div class="preview-box" id="previewFrontBox">Frente</div>
-                    <div class="preview-box" id="previewBackBox">Verso</div>
+                    <div class="preview-box" id="previewFrontBox">
+                        <span>Frente</span>
+                    </div>
+                    <div class="preview-box" id="previewBackBox">
+                        <span>Verso</span>
+                    </div>
                 </div>
 
                 <button class="btn-primary" id="btnVerifyAge" disabled onclick="startAgeVerification()">Verificar idade</button>
@@ -1523,7 +1618,8 @@
             package: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
             check: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
             x: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-            checkSmall: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+            checkSmall: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+            trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
         };
 
         // --- Trava de Zoom ---
@@ -1570,6 +1666,7 @@
         // --- Histórico ---
         let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
         let currentOrderId = null;
+        let isPurchasePix = false; // true = PIX da compra (não credita saldo)
 
         function updateHistoryBadge() {
             document.getElementById('historyBadge').innerText = purchaseHistory.length;
@@ -1988,10 +2085,14 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function getCurrentBalance() {
+            return parseFloat(document.getElementById('userBalance').innerText.replace('R$ ', '').replace(',', '.')) || 0;
+        }
+
         function renderCartItems() {
             const container = document.getElementById('cartItems');
             const totalContainer = document.getElementById('cartTotalContainer');
-            const checkoutBtn = document.getElementById('checkoutBtn');
+            const paymentOptions = document.getElementById('paymentOptions');
             
             container.innerHTML = '';
             
@@ -2007,12 +2108,12 @@
                     </div>
                 `;
                 totalContainer.style.display = 'none';
-                checkoutBtn.style.display = 'none';
+                paymentOptions.style.display = 'none';
                 return;
             }
 
             totalContainer.style.display = 'flex';
-            checkoutBtn.style.display = 'block';
+            paymentOptions.style.display = 'flex';
 
             let total = 0;
             cart.forEach(item => {
@@ -2033,6 +2134,23 @@
             });
 
             document.getElementById('cartTotal').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+            // Atualiza botão de saldo
+            const balance = getCurrentBalance();
+            const btnBalance = document.getElementById('btnUseBalance');
+            if (balance >= total) {
+                btnBalance.disabled = false;
+                btnBalance.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    Usar Saldo (R$ ${balance.toFixed(2).replace('.', ',')})
+                `;
+            } else {
+                btnBalance.disabled = true;
+                btnBalance.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    Saldo insuficiente (R$ ${balance.toFixed(2).replace('.', ',')})
+                `;
+            }
         }
 
         function removeFromCart(id) {
@@ -2041,15 +2159,41 @@
             renderCartItems();
         }
 
-        function checkout() {
+        // --- PAGAMENTO COM SALDO ---
+        function payWithBalance() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const balance = getCurrentBalance();
+
+            if (balance < total) {
+                showToast('Saldo insuficiente', 'error');
+                return;
+            }
+
+            // Debita o saldo
+            const newBalance = balance - total;
+            document.getElementById('userBalance').innerText = `R$ ${newBalance.toFixed(2).replace('.', ',')}`;
+
+            // Salva pedido
+            currentOrderId = saveOrderToHistory(cart);
+            cart = [];
+            updateCartBadge();
+            closeCart();
+
+            showToast('Compra realizada com sucesso usando o saldo!');
+            setTimeout(() => openDeliveryModal(), 500);
+        }
+
+        // --- PAGAMENTO COM PIX (compra) ---
+        function payWithPix() {
             if (cart.length === 0) return;
             closeCart();
-            
+
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
+            isPurchasePix = true; // marca que é compra (não credita saldo)
+
             document.getElementById('customAmountInput').value = total.toFixed(2);
-            openBalanceModal();
-            generatePix(); 
+            openBalanceModal(true); // true = modo compra
+            generatePix();
         }
 
         // --- PIX ---
@@ -2060,20 +2204,25 @@
         const customInput = document.getElementById('customAmountInput');
         let selectedValue = null;
 
-        function openBalanceModal() {
+        function openBalanceModal(isPurchase = false) {
+            isPurchasePix = isPurchase;
             modal.classList.add('active');
-            if (cart.length > 0) {
+
+            if (isPurchase) {
                 document.getElementById('balanceModalTitle').innerText = 'Finalizar Compra';
                 document.getElementById('selectionView').style.display = 'none';
                 document.getElementById('pixView').classList.add('active');
+                document.getElementById('pixCreditNote').textContent = 'O pagamento será confirmado e o produto liberado automaticamente.';
             } else {
                 document.getElementById('balanceModalTitle').innerText = 'Adicionar Saldo';
+                document.getElementById('pixCreditNote').textContent = 'O saldo será creditado automaticamente após a confirmação.';
                 resetModal();
             }
         }
 
         function closeBalanceModal() {
             modal.classList.remove('active');
+            isPurchasePix = false;
         }
 
         function resetModal() {
@@ -2106,7 +2255,7 @@
         function generatePix() {
             let finalValue = customInput.value;
             
-            if (cart.length > 0 && finalValue === '') {
+            if (isPurchasePix && cart.length > 0 && (!finalValue || finalValue <= 0)) {
                 finalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             }
 
@@ -2146,20 +2295,17 @@
             qrContainer.classList.add('paid');
             
             setTimeout(() => {
-                if (cart.length > 0) {
+                if (isPurchasePix && cart.length > 0) {
+                    // COMPRA: só libera o produto, NÃO credita saldo
                     currentOrderId = saveOrderToHistory(cart);
-                    
                     cart = [];
                     updateCartBadge();
                     closeBalanceModal();
-                    
                     showToast("Pagamento confirmado! Produto liberado.");
-                    
-                    setTimeout(() => {
-                        openDeliveryModal();
-                    }, 600);
+                    setTimeout(() => openDeliveryModal(), 600);
                 } else {
-                    let currentBalance = parseFloat(document.getElementById('userBalance').innerText.replace('R$ ', '').replace(',', '.'));
+                    // RECARGA DE SALDO
+                    let currentBalance = getCurrentBalance();
                     let addValue = parseFloat(customInput.value);
                     if (isNaN(addValue)) addValue = 0;
                     let newBalance = currentBalance + addValue;
@@ -2319,8 +2465,8 @@
             document.getElementById('uploadLabel').textContent = 'Toque para enviar a frente do RG';
             document.getElementById('btnVerifyAge').disabled = true;
             document.getElementById('previewRow').style.display = 'none';
-            document.getElementById('previewFrontBox').innerHTML = 'Frente';
-            document.getElementById('previewBackBox').innerHTML = 'Verso';
+            document.getElementById('previewFrontBox').innerHTML = '<span>Frente</span>';
+            document.getElementById('previewBackBox').innerHTML = '<span>Verso</span>';
             goToAgeStep(1);
             document.getElementById('ageModal').classList.add('active');
         }
@@ -2344,7 +2490,12 @@
                     rgFrontData = ev.target.result;
                     document.getElementById('statusFront').classList.add('done');
                     document.getElementById('statusFront').innerHTML = `${icons.checkSmall} Frente`;
-                    document.getElementById('previewFrontBox').innerHTML = `<img src="${ev.target.result}" alt="Frente">`;
+                    document.getElementById('previewFrontBox').innerHTML = `
+                        <img src="${ev.target.result}" alt="Frente">
+                        <button class="preview-delete" onclick="deletePhoto('front')" title="Excluir foto">
+                            ${icons.trash}
+                        </button>
+                    `;
                     document.getElementById('previewRow').style.display = 'flex';
                     currentUploadSide = 'back';
                     document.getElementById('uploadLabel').textContent = 'Agora envie o verso do RG';
@@ -2353,12 +2504,46 @@
                     rgBackData = ev.target.result;
                     document.getElementById('statusBack').classList.add('done');
                     document.getElementById('statusBack').innerHTML = `${icons.checkSmall} Verso`;
-                    document.getElementById('previewBackBox').innerHTML = `<img src="${ev.target.result}" alt="Verso">`;
+                    document.getElementById('previewBackBox').innerHTML = `
+                        <img src="${ev.target.result}" alt="Verso">
+                        <button class="preview-delete" onclick="deletePhoto('back')" title="Excluir foto">
+                            ${icons.trash}
+                        </button>
+                    `;
                     document.getElementById('btnVerifyAge').disabled = false;
                     document.getElementById('uploadLabel').textContent = 'Fotos prontas. Clique em Verificar idade';
                 }
             };
             reader.readAsDataURL(file);
+        }
+
+        function deletePhoto(side) {
+            if (side === 'front') {
+                rgFrontData = null;
+                document.getElementById('statusFront').classList.remove('done');
+                document.getElementById('statusFront').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Frente`;
+                document.getElementById('previewFrontBox').innerHTML = '<span>Frente</span>';
+                currentUploadSide = 'front';
+                document.getElementById('uploadLabel').textContent = 'Toque para enviar a frente do RG';
+            } else {
+                rgBackData = null;
+                document.getElementById('statusBack').classList.remove('done');
+                document.getElementById('statusBack').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Verso`;
+                document.getElementById('previewBackBox').innerHTML = '<span>Verso</span>';
+                currentUploadSide = 'back';
+                document.getElementById('uploadLabel').textContent = 'Agora envie o verso do RG';
+            }
+
+            document.getElementById('btnVerifyAge').disabled = true;
+
+            // Se as duas foram apagadas, esconde a linha de preview
+            if (!rgFrontData && !rgBackData) {
+                document.getElementById('previewRow').style.display = 'none';
+                currentUploadSide = 'front';
+                document.getElementById('uploadLabel').textContent = 'Toque para enviar a frente do RG';
+            }
+
+            showToast('Foto removida');
         }
 
         function startAgeVerification() {
