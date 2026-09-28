@@ -1940,7 +1940,9 @@
             track.innerHTML = '';
             dotsContainer.innerHTML = '';
             
-            promos.forEach((promo, index) => {
+            const list = (window.adminPromos && window.adminPromos.length) ? window.adminPromos : promos;
+            
+            list.forEach((promo, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
                 slide.innerHTML = `
@@ -1977,18 +1979,18 @@
         }
 
         setInterval(() => {
-            currentSlide = (currentSlide + 1) % promos.length;
+            const list = (window.adminPromos && window.adminPromos.length) ? window.adminPromos : promos;
+            if (list.length === 0) return;
+            currentSlide = (currentSlide + 1) % list.length;
             goToSlide(currentSlide);
         }, 4000);
-
-        renderPromos();
 
         // --- Produtos ---
         const productGrid = document.getElementById('productGrid');
         const relatedGrid = document.getElementById('relatedGrid');
 
         function getFilteredProducts() {
-            let list = products;
+            let list = (window.adminProducts && window.adminProducts.length) ? window.adminProducts : products;
             if (currentCategory !== 'all') {
                 list = list.filter(p => p.cat === currentCategory);
             }
@@ -2035,15 +2037,13 @@
             renderProducts();
         }
 
-        renderFilters();
-        renderProducts();
-
         // --- Detalhes ---
         let currentProduct = null;
         let currentQty = 1;
 
         function openProductModal(productId) {
-            currentProduct = products.find(p => p.id === productId);
+            const allProducts = (window.adminProducts && window.adminProducts.length) ? window.adminProducts : products;
+            currentProduct = allProducts.find(p => p.id === productId);
             if (!currentProduct) return;
 
             if (currentProduct.cat === 'adulto' && !ageVerified) {
@@ -2058,9 +2058,9 @@
             document.getElementById('detailDesc').innerText = currentProduct.desc;
             document.getElementById('detailImg').innerHTML = icons.package;
             
-            const related = products.filter(p => p.id !== currentProduct.id && p.cat === currentProduct.cat).slice(0, 2);
+            const related = allProducts.filter(p => p.id !== currentProduct.id && p.cat === currentProduct.cat).slice(0, 2);
             if (related.length === 0) {
-                const relatedFallback = products.filter(p => p.id !== currentProduct.id).slice(0, 2);
+                const relatedFallback = allProducts.filter(p => p.id !== currentProduct.id).slice(0, 2);
                 renderProducts(relatedGrid, relatedFallback);
             } else {
                 renderProducts(relatedGrid, related);
@@ -2877,14 +2877,118 @@
 
         function submitAdminLogin() {
             const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') {
+            const correctPass = localStorage.getItem('js_admin_pass') || 'joao23M';
+            if (password === correctPass) {
                 showToast("Login realizado com sucesso!");
                 closeAdminModal();
+                setTimeout(() => { window.location.href = 'admin.html'; }, 400);
             } else {
                 showToast("Senha incorreta. Tente novamente.", 'error');
                 document.getElementById('adminPassword').value = '';
             }
         }
+
+        /* ============================================================
+           INTEGRAÇÃO COM O PAINEL ADMIN
+           Lê tudo que foi salvo pelo admin.html e aplica no home
+        ============================================================ */
+        function applyAdminData() {
+            // ---------- CONFIGURAÇÕES GERAIS ----------
+            try {
+                const s = JSON.parse(localStorage.getItem('js_settings') || 'null');
+                if (s) {
+                    // Nome da loja no header
+                    const logoEl = document.querySelector('.logo');
+                    if (logoEl && logoEl.childNodes.length) {
+                        // substitui só o texto "Joãozinho" mantendo ícone e dot
+                        logoEl.childNodes.forEach(n => {
+                            if (n.nodeType === 3 && n.textContent.trim().length) {
+                                n.textContent = ' ' + s.storeName + ' ';
+                            }
+                        });
+                    }
+
+                    // Footer: nome, CNPJ, horário
+                    const footer = document.querySelector('footer');
+                    if (footer) {
+                        const ps = footer.querySelectorAll('p');
+                        if (ps[0]) ps[0].innerHTML = '<strong>' + s.storeName + '</strong>';
+                        if (ps[1]) ps[1].textContent = 'CNPJ: ' + s.cnpj;
+                        if (ps[2]) ps[2].textContent = 'Atendimento: ' + s.hours;
+                    }
+
+                    // Links de suporte
+                    document.querySelectorAll('a[href*="wa.me"]').forEach(a => { a.href = s.whatsapp; });
+                    document.querySelectorAll('a[href*="t.me"]').forEach(a => { a.href = s.telegram; });
+
+                    // Status dot (verde/vermelho)
+                    const dot = document.getElementById('statusDot');
+                    if (dot) {
+                        dot.className = 'logo-dot ' + (s.status === 'maintenance' ? 'status-maintenance' : 'status-active');
+                    }
+                }
+            } catch (e) { console.warn('Admin: erro nas configurações', e); }
+
+            // ---------- DEPOIMENTOS ----------
+            try {
+                const list = JSON.parse(localStorage.getItem('js_testimonials') || 'null');
+                if (list && list.length) {
+                    const scroll = document.querySelector('.testimonials-scroll');
+                    if (scroll) {
+                        const star = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+                        scroll.innerHTML = list.map(t => `
+                            <div class="testimonial-card">
+                                <div class="testimonial-stars">${star.repeat(t.rating || 5)}</div>
+                                <p class="testimonial-text">"${t.text}"</p>
+                                <p class="testimonial-author">- ${t.author}</p>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) { console.warn('Admin: erro nos depoimentos', e); }
+
+            // ---------- FAQ ----------
+            try {
+                const list = JSON.parse(localStorage.getItem('js_faq') || 'null');
+                if (list && list.length) {
+                    const section = document.querySelector('.faq-section');
+                    if (section) {
+                        const headerHtml = section.querySelector('.section-header').outerHTML;
+                        section.innerHTML = headerHtml + list.map(f => `
+                            <details class="faq-item">
+                                <summary>${f.q}</summary>
+                                <div class="faq-content">${f.a}</div>
+                            </details>
+                        `).join('');
+                    }
+                }
+            } catch (e) { console.warn('Admin: erro no FAQ', e); }
+
+            // ---------- PROMOÇÕES (carrossel) ----------
+            try {
+                const list = JSON.parse(localStorage.getItem('js_promos') || 'null');
+                if (list && list.length) {
+                    window.adminPromos = list; // usado pelo renderPromos, se existir
+                }
+            } catch (e) { console.warn('Admin: erro nas promoções', e); }
+
+            // ---------- PRODUTOS ----------
+            try {
+                const list = JSON.parse(localStorage.getItem('js_products') || 'null');
+                if (list && list.length) {
+                    window.adminProducts = list; // usado pela listagem
+                }
+            } catch (e) { console.warn('Admin: erro nos produtos', e); }
+        }
+
+        // Executa assim que a página carregar
+        document.addEventListener('DOMContentLoaded', applyAdminData);
+        setTimeout(applyAdminData, 100); // reforço
+
+        // Inicializa render após aplicar dados do admin
+        renderFilters();
+        renderProducts();
+        renderPromos();
 
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-overlay')) {
