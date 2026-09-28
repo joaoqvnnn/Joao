@@ -79,6 +79,7 @@
             gap: 6px;
             flex-shrink: 0;
             min-width: 0;
+            line-height: 1;
         }
 
         .logo-dot {
@@ -86,6 +87,9 @@
             height: 8px;
             border-radius: 50%;
             flex-shrink: 0;
+            display: inline-block;
+            margin-left: 2px;
+            vertical-align: middle;
             transition: background-color 0.3s;
         }
         
@@ -595,6 +599,7 @@
         }
 
         .qr-container.paid { border-color: var(--success-color); background-color: #ecfdf5; }
+        .qr-container.expired { border-color: var(--error-color); opacity: 0.55; }
 
         .qr-checkmark {
             position: absolute; width: 60px; height: 60px;
@@ -618,6 +623,15 @@
         }
 
         .pix-value { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+
+        .pix-timer {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: -6px;
+        }
+        .pix-timer.warning { color: #f59e0b; }
+        .pix-timer.expired { color: var(--error-color); }
         
         .pix-instructions {
             background-color: var(--surface-color); border: 1px solid var(--border-color);
@@ -1005,7 +1019,6 @@
             color: var(--success-color);
         }
 
-        /* Prévia + overlay de exclusão (só aparece ao clicar) */
         .preview-row {
             display: flex;
             gap: 12px;
@@ -1353,6 +1366,7 @@
                     </div>
                 </div>
                 <p class="pix-value" id="pixValueDisplay">R$ 0,00</p>
+                <p class="pix-timer" id="pixTimer">Válido por 05:00</p>
                 
                 <div class="pix-instructions">
                     <strong>Como pagar no seu banco:</strong>
@@ -1369,7 +1383,8 @@
                     <input type="text" id="pixCodeInput" value="00020126580014br.gov.bcb.pix0136..." readonly>
                     <button onclick="copyPix()">Copiar</button>
                 </div>
-                <button class="btn-primary" style="margin-top: 10px;" onclick="simulatePayment()">Simular Pagamento</button>
+                <button class="btn-primary" style="margin-top: 10px;" id="btnSimulatePay" onclick="simulatePayment()">Simular Pagamento</button>
+                <button class="btn-primary" style="margin-top: 10px; display:none;" id="btnNewPix" onclick="generatePix()">Gerar novo PIX</button>
             </div>
         </div>
     </div>
@@ -1634,7 +1649,8 @@
             palette: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`,
             music: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
             users: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-            lock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lock-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+            lockClosed: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lock-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+            lockOpen: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lock-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`,
             package: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
             check: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
             x: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
@@ -1687,6 +1703,11 @@
         let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
         let currentOrderId = null;
         let isPurchasePix = false;
+
+        // --- PIX Expiration ---
+        let pixExpiresAt = null;
+        let pixTimerInterval = null;
+        const PIX_VALIDITY_SECONDS = 300; // 5 minutos
 
         function updateHistoryBadge() {
             document.getElementById('historyBadge').innerText = purchaseHistory.length;
@@ -1755,7 +1776,7 @@
             { id: 'produtividade', name: 'Produtividade', icon: icons.palette },
             { id: 'musica', name: 'Música', icon: icons.music },
             { id: 'kids', name: 'Kids e Família', icon: icons.users },
-            { id: 'adulto', name: 'Adulto +18', icon: icons.lock, locked: true }
+            { id: 'adulto', name: 'Adulto +18', locked: true }
         ];
 
         let currentCategory = 'all';
@@ -1884,8 +1905,15 @@
             container.innerHTML = '';
             categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `chip ${currentCategory === cat.id ? 'active' : ''} ${cat.locked && !ageVerified ? 'locked' : ''}`;
-                btn.innerHTML = `${cat.icon} ${cat.name}`;
+                const isLocked = cat.locked && !ageVerified;
+                btn.className = `chip ${currentCategory === cat.id ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+                
+                let iconHtml = cat.icon || '';
+                if (cat.id === 'adulto') {
+                    iconHtml = ageVerified ? icons.lockOpen : icons.lockClosed;
+                }
+                
+                btn.innerHTML = `${iconHtml} ${cat.name}`;
                 btn.onclick = () => selectCategory(cat.id);
                 container.appendChild(btn);
             });
@@ -2227,17 +2255,21 @@
         function closeBalanceModal() {
             modal.classList.remove('active');
             isPurchasePix = false;
+            clearPixTimer();
         }
 
         function resetModal() {
             selectionView.style.display = 'block';
             pixView.classList.remove('active');
-            qrContainer.classList.remove('paid');
+            qrContainer.classList.remove('paid', 'expired');
             customInput.value = '';
             selectedValue = null;
             document.querySelectorAll('.amount-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
+            document.getElementById('btnSimulatePay').style.display = 'block';
+            document.getElementById('btnNewPix').style.display = 'none';
+            clearPixTimer();
         }
 
         function selectAmount(btn, value) {
@@ -2254,6 +2286,51 @@
                 b.classList.remove('selected');
             });
             selectedValue = null;
+        }
+
+        function clearPixTimer() {
+            if (pixTimerInterval) {
+                clearInterval(pixTimerInterval);
+                pixTimerInterval = null;
+            }
+            pixExpiresAt = null;
+        }
+
+        function startPixTimer() {
+            clearPixTimer();
+            pixExpiresAt = Date.now() + (PIX_VALIDITY_SECONDS * 1000);
+            
+            const timerEl = document.getElementById('pixTimer');
+            const btnSimulate = document.getElementById('btnSimulatePay');
+            const btnNew = document.getElementById('btnNewPix');
+            
+            qrContainer.classList.remove('expired', 'paid');
+            btnSimulate.style.display = 'block';
+            btnNew.style.display = 'none';
+            btnSimulate.disabled = false;
+
+            function updateTimer() {
+                const remaining = Math.max(0, Math.floor((pixExpiresAt - Date.now()) / 1000));
+                const min = Math.floor(remaining / 60).toString().padStart(2, '0');
+                const sec = (remaining % 60).toString().padStart(2, '0');
+                
+                if (remaining <= 0) {
+                    timerEl.textContent = 'PIX expirado';
+                    timerEl.className = 'pix-timer expired';
+                    qrContainer.classList.add('expired');
+                    btnSimulate.style.display = 'none';
+                    btnNew.style.display = 'block';
+                    clearPixTimer();
+                    showToast('QR Code PIX expirado. Gere um novo.', 'error');
+                    return;
+                }
+                
+                timerEl.textContent = `Válido por ${min}:${sec}`;
+                timerEl.className = remaining <= 60 ? 'pix-timer warning' : 'pix-timer';
+            }
+            
+            updateTimer();
+            pixTimerInterval = setInterval(updateTimer, 1000);
         }
 
         function generatePix() {
@@ -2276,9 +2353,17 @@
 
             selectionView.style.display = 'none';
             pixView.classList.add('active');
+            
+            // Inicia o timer de expiração
+            startPixTimer();
         }
 
         function copyPix() {
+            if (pixExpiresAt && Date.now() > pixExpiresAt) {
+                showToast('Este PIX já expirou. Gere um novo.', 'error');
+                return;
+            }
+            
             const pixInput = document.getElementById('pixCodeInput');
             pixInput.select();
             pixInput.setSelectionRange(0, 99999);
@@ -2296,7 +2381,15 @@
         }
 
         function simulatePayment() {
+            if (pixExpiresAt && Date.now() > pixExpiresAt) {
+                showToast('Este PIX já expirou. Gere um novo.', 'error');
+                return;
+            }
+            
             qrContainer.classList.add('paid');
+            clearPixTimer();
+            document.getElementById('pixTimer').textContent = 'Pagamento confirmado';
+            document.getElementById('pixTimer').className = 'pix-timer';
             
             setTimeout(() => {
                 if (isPurchasePix && cart.length > 0) {
@@ -2486,10 +2579,8 @@
 
         function togglePreviewDelete(side) {
             const box = document.getElementById(side === 'front' ? 'previewFrontBox' : 'previewBackBox');
-            // Só mostra overlay se tiver imagem
             if (!box.querySelector('img')) return;
             
-            // Fecha o outro se estiver aberto
             const other = document.getElementById(side === 'front' ? 'previewBackBox' : 'previewFrontBox');
             other.classList.remove('show-delete');
             
@@ -2517,7 +2608,6 @@
                     `;
                     document.getElementById('previewFrontBox').classList.remove('show-delete');
                     
-                    // Só avança pro verso se ainda não tiver verso
                     if (!rgBackData) {
                         currentUploadSide = 'back';
                         document.getElementById('uploadLabel').textContent = 'Agora envie o verso do RG';
@@ -2571,7 +2661,6 @@
 
             document.getElementById('btnVerifyAge').disabled = true;
 
-            // Se as duas foram apagadas, esconde a linha de preview
             if (!rgFrontData && !rgBackData) {
                 document.getElementById('previewRow').style.display = 'none';
                 currentUploadSide = 'front';
@@ -2616,6 +2705,7 @@
 
         function finishAgeVerification() {
             closeAgeModal();
+            renderFilters(); // atualiza o ícone do cadeado para aberto
             selectCategory('adulto');
             showToast('Categoria Adulto +18 liberada');
         }
