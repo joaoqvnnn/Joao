@@ -4,158 +4,202 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Painel Admin • Joãozinho Store</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--surface:#f8f9fa;--text:#111;--text2:#666;--border:#e5e7eb;--primary:#000;--contrast:#fff;--success:#10b981;--error:#ef4444;--warning:#f59e0b}
-body.dark{--bg:#0a0a0a;--surface:#1a1a1a;--text:#fff;--text2:#a1a1aa;--border:#2a2a2a;--primary:#fff;--contrast:#000}
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);max-width:640px;margin:0 auto;padding-bottom:100px;transition:background .3s,color .3s}
-svg{display:block}
+:root{--bg:#fff;--surface:#f8f9fa;--surface2:#f1f3f5;--text:#0d0d0d;--text2:#71717a;--border:#e5e7eb;--primary:#000;--contrast:#fff;--success:#10b981;--error:#ef4444;--warning:#f59e0b;--info:#3b82f6}
+body.dark{--bg:#0a0a0a;--surface:#161616;--surface2:#1f1f1f;--text:#fff;--text2:#a1a1aa;--border:#27272a;--primary:#fff;--contrast:#000}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;font-feature-settings:"tnum"}
+body{background:var(--bg);color:var(--text);max-width:640px;margin:0 auto;padding-bottom:110px;transition:background .3s,color .3s}
+svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* LOGIN */
-#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:16px}
-.lock-badge{width:88px;height:88px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text)}
-#loginScreen h1{font-size:24px;font-weight:700;text-align:center}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:18px}
+.lock-badge{width:88px;height:88px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lock-badge svg{width:40px;height:40px}
+#loginScreen h1{font-size:24px;font-weight:700;text-align:center;letter-spacing:-.4px}
 #loginScreen p{font-size:14px;color:var(--text2);text-align:center}
-#loginScreen input{width:100%;max-width:360px;padding:16px;border:1px solid var(--border);border-radius:16px;text-align:center;font-size:16px;background:var(--surface);color:var(--text);outline:none;letter-spacing:3px}
+#loginScreen input{width:100%;max-width:360px;padding:16px;border:1px solid var(--border);border-radius:16px;text-align:center;font-size:16px;background:var(--surface);color:var(--text);outline:none;letter-spacing:4px;transition:border-color .2s}
+#loginScreen input:focus{border-color:var(--primary)}
 .btn-login{width:100%;max-width:360px;padding:16px;border:none;border-radius:16px;background:var(--primary);color:var(--contrast);font-size:16px;font-weight:700;cursor:pointer}
 .err-msg{color:var(--error);font-size:13px;font-weight:600;min-height:18px}
 
 /* HEADER */
-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;position:sticky;top:0;background:var(--bg);z-index:20;border-bottom:1px solid var(--border)}
-.logo{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--text)}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;position:sticky;top:0;background:var(--bg);z-index:20;border-bottom:1px solid var(--border)}
+.logo{font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;color:var(--text);letter-spacing:-.3px}
+.logo svg{width:22px;height:22px}
 .badge-admin{background:var(--error);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.5px}
 .header-actions{display:flex;gap:10px}
-.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn svg{width:19px;height:19px}
 
 /* TABS */
-.tabs-bar{position:sticky;top:75px;background:var(--bg);z-index:19;padding:12px 20px;overflow-x:auto;border-bottom:1px solid var(--border);display:flex;gap:10px}
+.tabs-bar{position:sticky;top:79px;background:var(--bg);z-index:19;padding:12px 20px;overflow-x:auto;border-bottom:1px solid var(--border);display:flex;gap:10px;scrollbar-width:none}
 .tabs-bar::-webkit-scrollbar{display:none}
 .tab-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:24px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s}
-.tab-btn svg{width:16px;height:16px;flex-shrink:0}
+.tab-btn svg{width:15px;height:15px;stroke-width:2.2}
 .tab-btn.active{background:var(--primary);color:var(--contrast);border-color:var(--primary)}
-.tab-btn .tbadge{background:var(--error);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+.tab-btn .tbadge{background:var(--error);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;margin-left:2px}
 
 /* MAIN */
 main{padding:20px;display:flex;flex-direction:column;gap:18px}
-.page{display:none;flex-direction:column;gap:16px}
+.page{display:none;flex-direction:column;gap:18px}
 .page.active{display:flex}
-.page-header h2{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-header h2{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
 .page-header p{font-size:14px;color:var(--text2)}
 
-/* STATS */
+/* STATS + CHART */
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px}
-.stat-card .label{font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.stat-card .value{font-size:26px;font-weight:700}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.stat-card .label{font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.stat-card .value{font-size:28px;font-weight:800;letter-spacing:-.5px}
 .stat-card .sub{font-size:12px;color:var(--text2)}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px}
+.chart-card h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.chart-card h3 svg{width:18px;height:18px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;padding-bottom:8px}
+.chart-bar{flex:1;background:var(--primary);border-radius:4px 4px 0 0;min-height:4px;position:relative;transition:opacity .2s}
+.chart-bar:hover{opacity:.75}
+.chart-labels{display:flex;gap:6px;font-size:10px;color:var(--text2);font-weight:600}
+.chart-labels span{flex:1;text-align:center}
 
 /* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
 .card h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
-.card h3 svg{width:18px;height:18px;color:var(--text)}
+.card h3 svg{width:18px;height:18px}
 
 /* FORMS */
 .form-group{display:flex;flex-direction:column;gap:8px}
 .form-group label{font-size:13px;font-weight:600;color:var(--text2)}
-.form-group input,.form-group textarea,.form-group select{padding:14px;border:1px solid var(--border);border-radius:12px;font-size:15px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;width:100%;resize:vertical}
+.form-group input,.form-group textarea,.form-group select{padding:14px;border:1px solid var(--border);border-radius:12px;font-size:15px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;width:100%;resize:vertical;transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--primary)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .check-row{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600}
-.check-row input{width:auto;transform:scale(1.3)}
+.check-row input{width:auto;transform:scale(1.3);accent-color:var(--primary)}
 
 /* BUTTONS */
-.btn{padding:14px 20px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.btn{padding:14px 20px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,opacity .2s}
 .btn:active{transform:scale(.97)}
-.btn svg{width:16px;height:16px;flex-shrink:0}
+.btn svg{width:16px;height:16px}
 .btn-primary{background:var(--primary);color:var(--contrast)}
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 .btn-success{background:var(--success);color:#fff}
 .btn-danger{background:var(--error);color:#fff}
 .btn-warning{background:var(--warning);color:#fff}
-.btn-sm{padding:10px 16px;font-size:13px;border-radius:22px}
+.btn-info{background:var(--info);color:#fff}
+.btn-sm{padding:10px 14px;font-size:13px;border-radius:12px}
 .btn-sm svg{width:14px;height:14px}
 .btn-block{width:100%}
 
 /* ITEMS */
 .item{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
-.item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.item-title{font-size:15px;font-weight:700;word-break:break-word}
-.item-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-top:3px;word-break:break-word}
+.item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.item-title{font-size:15px;font-weight:700;word-break:break-word;line-height:1.3}
+.item-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-top:4px;word-break:break-word}
 .item-actions{display:flex;gap:8px;flex-wrap:wrap}
-.empty-state{text-align:center;padding:48px 20px;color:var(--text2);font-size:14px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.empty-state svg{width:40px;height:40px;opacity:.4;color:var(--text2)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text2);font-size:14px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.empty-state svg{width:44px;height:44px;opacity:.35;stroke-width:1.5}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;justify-content:center;align-items:flex-end;z-index:200;opacity:0;visibility:hidden;transition:all .3s}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:flex-end;z-index:200;opacity:0;visibility:hidden;transition:opacity .3s;backdrop-filter:blur(2px)}
 .modal-overlay.active{opacity:1;visibility:visible}
 .modal-content{background:var(--bg);width:100%;max-width:640px;border-radius:24px 24px 0 0;padding:24px;transform:translateY(100%);transition:transform .3s;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
 .modal-overlay.active .modal-content{transform:translateY(0)}
 .modal-header{display:flex;justify-content:space-between;align-items:center}
-.modal-header h2{font-size:20px;font-weight:700}
-.close-btn{background:none;border:none;font-size:28px;color:var(--text2);cursor:pointer;line-height:1;padding:0 4px}
+.modal-header h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.close-btn{background:none;border:none;font-size:28px;color:var(--text2);cursor:pointer;line-height:1;padding:0 6px}
 
-/* RG */
-.rg-photos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.rg-photo{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;aspect-ratio:1.4;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;cursor:pointer}
-.rg-photo img{width:100%;height:100%;object-fit:cover;display:block}
+/* CONFIRM DIALOG (custom, bonito) */
+.dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:300;padding:24px;opacity:0;visibility:hidden;transition:opacity .25s;backdrop-filter:blur(4px)}
+.dialog-overlay.active{opacity:1;visibility:visible}
+.dialog{background:var(--bg);border-radius:22px;padding:28px 24px 20px;max-width:340px;width:100%;text-align:center;transform:scale(.92);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.dialog-overlay.active .dialog{transform:scale(1)}
+.dialog-icon{width:64px;height:64px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--error)}
+.dialog-icon svg{width:30px;height:30px}
+.dialog h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.dialog p{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:22px}
+.dialog-actions{display:flex;gap:10px}
+.dialog-actions .btn{flex:1}
+
+/* RG GALLERY */
+.rg-gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rg-thumb{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;aspect-ratio:1.5;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:12px;font-weight:600}
+.rg-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.rg-thumb .rg-label{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.4px}
+.rg-user-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.rg-avatar{width:44px;height:44px;background:var(--primary);color:var(--contrast);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.rg-user-info{flex:1;min-width:0}
+.rg-user-info h4{font-size:15px;font-weight:700;margin-bottom:2px}
+.rg-user-info p{font-size:12px;color:var(--text2)}
 
 /* TAGS */
-.tag{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
 .tag.pending{background:#fef3c7;color:#92400e}
 .tag.approved{background:#d1fae5;color:#065f46}
 .tag.rejected{background:#fee2e2;color:#991b1b}
+.tag.banned{background:#fee2e2;color:#991b1b}
+.tag.active{background:#d1fae5;color:#065f46}
 body.dark .tag.pending{background:#451a03;color:#fcd34d}
 body.dark .tag.approved{background:#064e3b;color:#6ee7b7}
-body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
+body.dark .tag.rejected,body.dark .tag.banned{background:#7f1d1d;color:#fecaca}
+body.dark .tag.active{background:#064e3b;color:#6ee7b7}
 
 /* TOAST */
-.toast-container{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;width:90%;max-width:400px}
-.toast{padding:16px 20px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .3s;color:#fff}
+.toast-container{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;width:90%;max-width:400px}
+.toast{padding:16px 20px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .3s;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .toast.show{transform:translateY(0);opacity:1}
+.toast svg{width:16px;height:16px;stroke-width:3}
 
-/* BOTTOM NAV - PROFISSIONAL */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;z-index:50}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border:none;background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;position:relative;transition:color .2s}
-.nav-item svg{width:24px;height:24px;stroke-width:2;transition:all .2s}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 8px 12px;z-index:50}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:none;background:none;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;position:relative;transition:color .2s}
+.nav-item svg{width:24px;height:24px;stroke-width:2}
 .nav-item.active{color:var(--text)}
-.nav-item.active svg{stroke-width:2.5}
-.nav-item .nav-badge{position:absolute;top:4px;right:calc(50% - 22px);background:var(--error);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
+.nav-item.active svg{stroke-width:2.4}
+.nav-item .nav-badge{position:absolute;top:4px;right:calc(50% - 24px);background:var(--error);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
+
+/* SEARCH BAR */
+.search-input-wrap{position:relative;display:flex;align-items:center}
+.search-input-wrap svg{position:absolute;left:14px;width:18px;height:18px;color:var(--text2);pointer-events:none}
+.search-input-wrap input{padding-left:44px !important}
 </style>
 </head>
 <body>
 
-<!-- SVG ICONS LIBRARY -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
-<symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
-<symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
-<symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
-<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
-<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
-<symbol id="i-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
-<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
-<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
-<symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></symbol>
-<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-<symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
-<symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
-<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
-<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
-<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
-<symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
-<symbol id="i-shop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M9 22V12h6v10"/></symbol>
-<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
-<symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
-<symbol id="i-type" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></symbol>
-<symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
-<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
-<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-<symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+<symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+<symbol id="i-shop" viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M9 22V12h6v10"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+<symbol id="i-type" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
 </svg>
 
-<!-- LOGIN -->
 <div id="loginScreen">
-  <div class="lock-badge"><svg width="40" height="40"><use href="#i-lock"/></svg></div>
+  <div class="lock-badge"><svg><use href="#i-lock"/></svg></div>
   <h1>Painel Administrativo</h1>
   <p>Digite a senha para gerenciar a loja</p>
   <input type="password" id="loginPassword" placeholder="• • • • • •" onkeypress="if(event.key==='Enter')tryLogin()">
@@ -163,20 +207,15 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
   <button class="btn-login" onclick="tryLogin()">Entrar no Painel</button>
 </div>
 
-<!-- APP -->
 <div id="appScreen" style="display:none;">
   <header>
     <div class="logo">
-      <svg width="22" height="22"><use href="#i-home"/></svg>
+      <svg><use href="#i-home"/></svg>
       Joãozinho <span class="badge-admin">ADMIN</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="toggleTheme()">
-        <svg id="themeIcon" width="18" height="18"><use href="#i-moon"/></svg>
-      </button>
-      <button class="icon-btn" onclick="logout()">
-        <svg width="18" height="18"><use href="#i-power"/></svg>
-      </button>
+      <button class="icon-btn" onclick="toggleTheme()"><svg id="themeIcon"><use href="#i-moon"/></svg></button>
+      <button class="icon-btn" onclick="askLogout()"><svg><use href="#i-power"/></svg></button>
     </div>
   </header>
 
@@ -186,6 +225,7 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
     <button class="tab-btn" data-tab="promos" onclick="switchTab('promos')"><svg><use href="#i-zap"/></svg>Promoções</button>
     <button class="tab-btn" data-tab="testimonials" onclick="switchTab('testimonials')"><svg><use href="#i-msg"/></svg>Depoimentos</button>
     <button class="tab-btn" data-tab="faq" onclick="switchTab('faq')"><svg><use href="#i-help"/></svg>FAQ</button>
+    <button class="tab-btn" data-tab="users" onclick="switchTab('users')"><svg><use href="#i-users"/></svg>Usuários</button>
     <button class="tab-btn" data-tab="texts" onclick="switchTab('texts')"><svg><use href="#i-type"/></svg>Textos</button>
     <button class="tab-btn" data-tab="rg" onclick="switchTab('rg')"><svg><use href="#i-shield"/></svg>RG <span class="tbadge" id="rgTabBadge" style="display:none;">0</span></button>
     <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')"><svg><use href="#i-cog"/></svg>Config</button>
@@ -200,6 +240,13 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
         <div class="stat-card"><span class="label">Depoimentos</span><span class="value" id="statTestimonials">0</span><span class="sub">exibidos</span></div>
         <div class="stat-card"><span class="label">RGs pendentes</span><span class="value" id="statRgPending" style="color:var(--warning)">0</span><span class="sub">aguardando</span></div>
       </div>
+
+      <div class="chart-card">
+        <h3><svg><use href="#i-chart"/></svg>Produtos por categoria</h3>
+        <div class="chart-bars" id="chartBars"></div>
+        <div class="chart-labels" id="chartLabels"></div>
+      </div>
+
       <div class="card">
         <h3><svg><use href="#i-info"/></svg>Status da Loja</h3>
         <div class="form-group">
@@ -210,16 +257,22 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
           </select>
         </div>
       </div>
+
       <div class="card">
         <h3><svg><use href="#i-zap"/></svg>Ações Rápidas</h3>
         <button class="btn btn-primary btn-block" onclick="switchTab('products')"><svg><use href="#i-box"/></svg>Gerenciar Produtos</button>
-        <button class="btn btn-secondary btn-block" onclick="switchTab('rg')"><svg><use href="#i-shield"/></svg>Verificar RGs +18</button>
-        <button class="btn btn-secondary btn-block" onclick="openSite()"><svg><use href="#i-shop"/></svg>Ver Loja (Home)</button>
+        <button class="btn btn-secondary btn-block" onclick="switchTab('users')"><svg><use href="#i-users"/></svg>Gerenciar Usuários</button>
+        <button class="btn btn-secondary btn-block" onclick="switchTab('rg')"><svg><use href="#i-shield"/></svg>Verificar RGs</button>
+        <button class="btn btn-secondary btn-block" onclick="window.open('home.html','_blank')"><svg><use href="#i-shop"/></svg>Ver Loja</button>
       </div>
     </section>
 
     <section class="page" id="page-products">
       <div class="page-header"><h2>Produtos</h2><p>Gerencie o catálogo completo</p></div>
+      <div class="search-input-wrap">
+        <svg><use href="#i-search"/></svg>
+        <input type="text" id="productSearch" placeholder="Buscar produto..." oninput="renderProducts()">
+      </div>
       <button class="btn btn-primary btn-block" onclick="openProductForm()"><svg><use href="#i-plus"/></svg>Novo Produto</button>
       <div id="productsList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
@@ -240,6 +293,15 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
       <div class="page-header"><h2>FAQ</h2><p>Perguntas frequentes do site</p></div>
       <button class="btn btn-primary btn-block" onclick="openFaqForm()"><svg><use href="#i-plus"/></svg>Nova Pergunta</button>
       <div id="faqList" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </section>
+
+    <section class="page" id="page-users">
+      <div class="page-header"><h2>Usuários</h2><p>Gerencie e bloqueie usuários da loja</p></div>
+      <div class="search-input-wrap">
+        <svg><use href="#i-search"/></svg>
+        <input type="text" id="userSearch" placeholder="Buscar por nome, ID ou username..." oninput="renderUsers()">
+      </div>
+      <div id="usersList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
     <section class="page" id="page-texts">
@@ -292,7 +354,7 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
 
     <section class="page" id="page-rg">
       <div class="page-header"><h2>Verificações +18</h2><p>Aprove ou reprove os documentos enviados</p></div>
-      <div id="rgList" style="display:flex;flex-direction:column;gap:12px;"></div>
+      <div id="rgList" style="display:flex;flex-direction:column;gap:14px;"></div>
     </section>
 
     <section class="page" id="page-settings">
@@ -309,28 +371,17 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
       </div>
       <div class="card">
         <h3 style="color:var(--error)"><svg><use href="#i-alert"/></svg>Zona de Perigo</h3>
-        <button class="btn btn-danger btn-block" onclick="resetAll()"><svg><use href="#i-trash"/></svg>Apagar Todos os Dados</button>
+        <button class="btn btn-danger btn-block" onclick="askReset()"><svg><use href="#i-trash"/></svg>Apagar Todos os Dados</button>
       </div>
     </section>
   </main>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
-      <svg><use href="#i-chart"/></svg>Início
-    </button>
-    <button class="nav-item" data-tab="products" onclick="switchTab('products')">
-      <svg><use href="#i-box"/></svg>Produtos
-    </button>
-    <button class="nav-item" data-tab="rg" onclick="switchTab('rg')">
-      <svg><use href="#i-shield"/></svg>RG
-      <span class="nav-badge" id="rgNavBadge" style="display:none;">0</span>
-    </button>
-    <button class="nav-item" data-tab="testimonials" onclick="switchTab('testimonials')">
-      <svg><use href="#i-users"/></svg>Clientes
-    </button>
-    <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
-      <svg><use href="#i-cog"/></svg>Config
-    </button>
+    <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')"><svg><use href="#i-chart"/></svg>Início</button>
+    <button class="nav-item" data-tab="products" onclick="switchTab('products')"><svg><use href="#i-box"/></svg>Produtos</button>
+    <button class="nav-item" data-tab="users" onclick="switchTab('users')"><svg><use href="#i-users"/></svg>Usuários</button>
+    <button class="nav-item" data-tab="rg" onclick="switchTab('rg')"><svg><use href="#i-shield"/></svg>RG<span class="nav-badge" id="rgNavBadge" style="display:none;">0</span></button>
+    <button class="nav-item" data-tab="settings" onclick="switchTab('settings')"><svg><use href="#i-cog"/></svg>Config</button>
   </nav>
 </div>
 
@@ -341,15 +392,32 @@ body.dark .tag.rejected{background:#7f1d1d;color:#fecaca}
     <div id="rgViewBody"></div>
   </div>
 </div>
+
+<!-- DIALOG CUSTOM -->
+<div class="dialog-overlay" id="dialog">
+  <div class="dialog">
+    <div class="dialog-icon"><svg><use href="#i-alert"/></svg></div>
+    <h3 id="dialogTitle">Confirmar?</h3>
+    <p id="dialogText">Tem certeza que deseja continuar?</p>
+    <div class="dialog-actions">
+      <button class="btn btn-secondary" onclick="closeDialog(false)" id="dialogCancel">Cancelar</button>
+      <button class="btn btn-danger" onclick="closeDialog(true)" id="dialogConfirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-const KEYS={SETTINGS:'js_settings',TESTIMONIALS:'js_testimonials',PRODUCTS:'js_products',PROMOS:'js_promos',FAQ:'js_faq',RG:'js_rg_requests',ADMIN_PASS:'js_admin_pass'};
+const KEYS={SETTINGS:'js_settings',TESTIMONIALS:'js_testimonials',PRODUCTS:'js_products',PROMOS:'js_promos',FAQ:'js_faq',RG:'js_rg_requests',USERS:'js_users',ADMIN_PASS:'js_admin_pass'};
+
 const DEFAULT_SETTINGS={storeName:'Joãozinho Store',cnpj:'00.000.000/0000-00',hours:'Segunda a Sexta, 09h às 18h',whatsapp:'https://wa.me/5511999999999',telegram:'https://t.me/suporte_joaozinho',status:'active',balanceLabel:'Saldo disponível',addBalanceText:'Adicionar saldo',searchPlaceholder:'O que você procura hoje?',sectionTitleProducts:'Nossos produtos',sectionTitleTestimonials:'O que dizem nossos clientes',sectionTitleFaq:'Perguntas Frequentes',promoBadgeText:'PROMOÇÃO DO DIA',promoButtonText:'Aproveitar agora',cartButtonText:'Ver Carrinho',addToCartText:'Adicionar ao Carrinho',checkoutText:'Usar Saldo da Carteira',pixText:'Pagar com PIX',termsText:'Termos de Uso',termsContent:'Ao comprar, você concorda com nossos termos.',privacyText:'Privacidade',privacyContent:'Seus dados estão seguros e não compartilhamos com terceiros.',copyrightText:'© 2026 Todos os direitos reservados.',adminLinkText:'Acesso Administrador',maintenanceBanner:''};
-const DEFAULT_TESTIMONIALS=[{id:1,text:'Comprei o IPTV Elite e a qualidade é surreal. Entrega automática e super rápida!',author:'Carlos M.',rating:5},{id:2,text:'Melhor preço do mercado. O suporte me ajudou na hora do pagamento.',author:'Ana Paula S.',rating:5},{id:3,text:'Já é a terceira vez que compro. Nunca tive problemas.',author:'Roberto F.',rating:5}];
+
+const DEFAULT_TESTIMONIALS=[{id:1,text:'Comprei o IPTV Elite e a qualidade é surreal.',author:'Carlos M.',rating:5},{id:2,text:'Melhor preço do mercado. Suporte excelente.',author:'Ana Paula S.',rating:5},{id:3,text:'Já é a terceira vez que compro. Recomendo!',author:'Roberto F.',rating:5}];
 const DEFAULT_PROMOS=[{id:1,targetProductId:1,title:'Netflix 4K',desc:'Qualidade máxima para a família.',price:'14,90'},{id:2,targetProductId:42,title:'IPTV Elite 90 dias',desc:'3 meses de estabilidade premium.',price:'59,90'},{id:3,targetProductId:62,title:'Canva Pro 6 meses',desc:'Design profissional por metade do preço.',price:'18,00'}];
-const DEFAULT_FAQ=[{id:1,q:'Como recebo meu produto após o pagamento?',a:'Assim que o PIX for confirmado, o bot libera os dados de acesso automaticamente.'},{id:2,q:'O pagamento via PIX é seguro?',a:'Sim! Tecnologia oficial do Banco Central, QR Code único.'},{id:3,q:'Qual o prazo de garantia?',a:'De 30 a 180 dias, conforme o produto.'},{id:4,q:'Posso pedir reembolso?',a:'Sim, até 7 dias se houver defeito.'},{id:5,q:'Como funciona o suporte?',a:'100% online e automatizado via chat.'}];
+const DEFAULT_FAQ=[{id:1,q:'Como recebo meu produto após o pagamento?',a:'Assim que o PIX for confirmado, o bot libera os dados de acesso automaticamente.'},{id:2,q:'O pagamento via PIX é seguro?',a:'Sim, tecnologia oficial do Banco Central.'},{id:3,q:'Qual o prazo de garantia?',a:'De 30 a 180 dias conforme produto.'},{id:4,q:'Posso pedir reembolso?',a:'Sim, até 7 dias se houver defeito.'},{id:5,q:'Como funciona o suporte?',a:'100% online e automatizado via chat.'}];
 const DEFAULT_PRODUCTS=[{id:1,cat:'filmes',name:'Netflix 4K',price:14.90,oldPrice:39.90,promo:true,desc:'Plano Premium 4K • 4 telas • 30 dias'},{id:2,cat:'filmes',name:'Disney+ Padrão',price:9.90,oldPrice:27.90,promo:true,desc:'Catálogo Disney completo'},{id:42,cat:'iptv',name:'IPTV Elite 90 dias',price:59.90,oldPrice:75.00,promo:true,desc:'3 meses premium'},{id:62,cat:'produtividade',name:'Canva Pro 6 meses',price:18.00,oldPrice:59.90,promo:true,desc:'6 meses de Canva Pro'}];
+const DEFAULT_USERS=[{id:1,name:'Carlos M.',username:'@carlos_m',banned:false,lastSeen:'Há 2 horas'},{id:2,name:'Ana Paula',username:'@anapaula',banned:false,lastSeen:'Há 1 dia'},{id:3,name:'Roberto F.',username:'@roberto',banned:true,lastSeen:'Há 3 dias'}];
 
 function $(id){return document.getElementById(id)}
 function load(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch(e){return fb}}
@@ -361,11 +429,41 @@ function toast(msg,type){
   const c=$('toastContainer');
   const t=document.createElement('div');
   t.className='toast';
-  t.style.background=type==='error'?'var(--error)':'var(--success)';
-  t.textContent=msg;
+  t.style.background=type==='error'?'var(--error)':(type==='warning'?'var(--warning)':'var(--success)');
+  const ic=type==='error'||type==='warning'?'i-alert':'i-check';
+  t.innerHTML='<svg><use href="#'+ic+'"/></svg><span>'+esc(msg)+'</span>';
   c.appendChild(t);
   setTimeout(()=>t.classList.add('show'),10);
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2500);
+}
+
+/* DIALOG CUSTOM */
+let dialogResolver=null;
+function confirmDialog(title,text,confirmLabel,btnClass){
+  return new Promise(res=>{
+    dialogResolver=res;
+    $('dialogTitle').textContent=title;
+    $('dialogText').textContent=text;
+    $('dialogConfirm').textContent=confirmLabel||'Confirmar';
+    $('dialogConfirm').className='btn '+(btnClass||'btn-danger');
+    $('dialog').classList.add('active');
+  });
+}
+function closeDialog(result){
+  $('dialog').classList.remove('active');
+  if(dialogResolver){dialogResolver(result);dialogResolver=null}
+}
+async function askLogout(){
+  const ok=await confirmDialog('Sair do painel?','Você precisará digitar a senha novamente para acessar.','Sair','btn-danger');
+  if(ok){sessionStorage.removeItem('js_admin_logged');location.reload()}
+}
+async function askReset(){
+  const ok1=await confirmDialog('Apagar TODOS os dados?','Produtos, depoimentos, RGs e configurações serão removidos.','Apagar','btn-danger');
+  if(!ok1)return;
+  const ok2=await confirmDialog('Última confirmação','Isso não pode ser desfeito. Continuar?','Sim, apagar','btn-danger');
+  if(!ok2)return;
+  Object.keys(KEYS).forEach(k=>localStorage.removeItem(KEYS[k]));
+  toast('Dados resetados');setTimeout(()=>location.reload(),800);
 }
 
 function tryLogin(){
@@ -374,9 +472,7 @@ function tryLogin(){
   if(pass===correct){sessionStorage.setItem('js_admin_logged','true');$('loginError').textContent='';showApp()}
   else{$('loginError').textContent='Senha incorreta';$('loginPassword').value=''}
 }
-function logout(){if(confirm('Sair?')){sessionStorage.removeItem('js_admin_logged');location.reload()}}
 function showApp(){$('loginScreen').style.display='none';$('appScreen').style.display='block';initApp()}
-function openSite(){window.open('home.html','_blank')}
 
 function toggleTheme(){
   document.body.classList.toggle('dark');
@@ -401,10 +497,12 @@ function ensureDefaults(){
   if(!localStorage.getItem(KEYS.PROMOS))save(KEYS.PROMOS,DEFAULT_PROMOS);
   if(!localStorage.getItem(KEYS.FAQ))save(KEYS.FAQ,DEFAULT_FAQ);
   if(!localStorage.getItem(KEYS.PRODUCTS))save(KEYS.PRODUCTS,DEFAULT_PRODUCTS);
+  if(!localStorage.getItem(KEYS.USERS))save(KEYS.USERS,DEFAULT_USERS);
   if(!localStorage.getItem(KEYS.RG))save(KEYS.RG,[]);
 }
-function renderAll(){renderDashboard();renderProducts();renderPromos();renderTestimonials();renderFaq();renderRg();loadSettingsForm();loadTextsForm()}
+function renderAll(){renderDashboard();renderChart();renderProducts();renderPromos();renderTestimonials();renderFaq();renderUsers();renderRg();loadSettingsForm();loadTextsForm()}
 
+/* DASHBOARD */
 function renderDashboard(){
   $('statProducts').textContent=load(KEYS.PRODUCTS,[]).length;
   $('statPromos').textContent=load(KEYS.PROMOS,[]).length;
@@ -417,60 +515,83 @@ function renderDashboard(){
   if(pending.length>0){tb.textContent=pending.length;tb.style.display='inline-flex';nb.textContent=pending.length;nb.style.display='flex'}
   else{tb.style.display='none';nb.style.display='none'}
 }
+function renderChart(){
+  const prods=load(KEYS.PRODUCTS,[]);
+  const cats={filmes:0,futebol:0,iptv:0,produtividade:0,musica:0,kids:0,adulto:0};
+  prods.forEach(p=>{if(cats[p.cat]!==undefined)cats[p.cat]++});
+  const labels={filmes:'Filmes',futebol:'Futebol',iptv:'IPTV',produtividade:'Produt.',musica:'Música',kids:'Kids',adulto:'+18'};
+  const max=Math.max(...Object.values(cats),1);
+  const barsEl=$('chartBars'),labelsEl=$('chartLabels');
+  barsEl.innerHTML='';labelsEl.innerHTML='';
+  Object.keys(cats).forEach(k=>{
+    const pct=(cats[k]/max)*100;
+    const b=document.createElement('div');
+    b.className='chart-bar';
+    b.style.height=Math.max(pct,4)+'%';
+    b.title=labels[k]+': '+cats[k];
+    barsEl.appendChild(b);
+    const l=document.createElement('span');
+    l.textContent=labels[k];
+    labelsEl.appendChild(l);
+  });
+}
 function saveStatusQuick(){const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);s.status=$('setStatusQuick').value;save(KEYS.SETTINGS,s);toast('Status atualizado')}
 
+/* PRODUTOS */
 function renderProducts(){
-  const list=load(KEYS.PRODUCTS,[]);const el=$('productsList');
-  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-box"/></svg>Nenhum produto cadastrado</div>';return}
-  el.innerHTML=list.map(p=>`<div class="item">
-    <div class="item-header"><div style="flex:1">
-      <div class="item-title">${esc(p.name)}</div>
-      <div class="item-sub">${esc(p.cat)} • R$ ${Number(p.price).toFixed(2).replace('.',',')}${p.oldPrice?' · De R$ '+Number(p.oldPrice).toFixed(2).replace('.',','):''}</div>
-      <div class="item-sub">${esc(p.desc||'')}</div>
-    </div>${p.promo?'<span class="tag approved">Promo</span>':''}</div>
+  const list=load(KEYS.PRODUCTS,[]);
+  const search=($('productSearch')?.value||'').toLowerCase();
+  const filtered=search?list.filter(p=>p.name.toLowerCase().includes(search)||p.cat.toLowerCase().includes(search)):list;
+  const el=$('productsList');
+  if(filtered.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-box"/></svg>Nenhum produto encontrado</div>';return}
+  el.innerHTML=filtered.map(p=>`<div class="item">
+    <div class="item-header">
+      <div style="flex:1">
+        <div class="item-title">${esc(p.name)}</div>
+        <div class="item-sub">${esc(p.cat)} • R$ ${Number(p.price).toFixed(2).replace('.',',')}${p.oldPrice?' · De R$ '+Number(p.oldPrice).toFixed(2).replace('.',','):''}</div>
+        <div class="item-sub">${esc(p.desc||'')}</div>
+      </div>
+      ${p.promo?'<span class="tag approved">Promo</span>':''}
+    </div>
     <div class="item-actions">
       <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})"><svg><use href="#i-edit"/></svg>Editar</button>
       <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})"><svg><use href="#i-trash"/></svg>Excluir</button>
-    </div></div>`).join('');
+    </div>
+  </div>`).join('');
 }
 function openProductForm(product){
-  const isEdit=!!product;const p=product||{id:Date.now(),cat:'filmes',name:'',price:0,oldPrice:'',promo:false,desc:''};
+  const isEdit=!!product;
+  const p=product||{id:Date.now(),cat:'filmes',name:'',price:0,oldPrice:'',promo:false,desc:''};
+  const cats=[['filmes','Filmes e Séries'],['futebol','Futebol Ao Vivo'],['iptv','IPTV Completo'],['produtividade','Produtividade'],['musica','Música'],['kids','Kids e Família'],['adulto','Adulto +18']];
   $('modalContent').innerHTML=`
     <div class="modal-header"><h2>${isEdit?'Editar':'Novo'} Produto</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
-    <div class="form-group"><label>Nome</label><input type="text" id="pName" value="${esc(p.name)}"></div>
+    <div class="form-group"><label>Nome do produto</label><input type="text" id="pName" value="${esc(p.name)}" placeholder="Ex: Netflix 4K"></div>
     <div class="form-row">
-      <div class="form-group"><label>Categoria</label><select id="pCat">
-        <option value="filmes"${p.cat==='filmes'?' selected':''}>Filmes e Séries</option>
-        <option value="futebol"${p.cat==='futebol'?' selected':''}>Futebol</option>
-        <option value="iptv"${p.cat==='iptv'?' selected':''}>IPTV</option>
-        <option value="produtividade"${p.cat==='produtividade'?' selected':''}>Produtividade</option>
-        <option value="musica"${p.cat==='musica'?' selected':''}>Música</option>
-        <option value="kids"${p.cat==='kids'?' selected':''}>Kids</option>
-        <option value="adulto"${p.cat==='adulto'?' selected':''}>Adulto +18</option>
-      </select></div>
+      <div class="form-group"><label>Categoria</label><select id="pCat">${cats.map(c=>`<option value="${c[0]}"${p.cat===c[0]?' selected':''}>${c[1]}</option>`).join('')}</select></div>
       <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" id="pPrice" value="${p.price||0}"></div>
     </div>
     <div class="form-group"><label>Preço antigo (opcional)</label><input type="number" step="0.01" id="pOld" value="${p.oldPrice||''}"></div>
     <div class="form-group"><label>Descrição</label><textarea id="pDesc" rows="3">${esc(p.desc||'')}</textarea></div>
     <div class="check-row"><input type="checkbox" id="pPromo"${p.promo?' checked':''}><label for="pPromo">Marcar como promoção</label></div>
-    <button class="btn btn-primary btn-block" onclick="saveProduct(${p.id},${isEdit})"><svg><use href="#i-save"/></svg>Salvar</button>`;
+    <button class="btn btn-primary btn-block" onclick="saveProduct(${p.id},${isEdit})"><svg><use href="#i-save"/></svg>Salvar Produto</button>`;
   $('modal').classList.add('active');
 }
 function editProduct(id){const p=load(KEYS.PRODUCTS,[]).find(x=>x.id===id);if(p)openProductForm(p)}
 function saveProduct(id,isEdit){
-  const name=$('pName').value.trim();const cat=$('pCat').value;const price=parseFloat($('pPrice').value);
-  const oldPrice=parseFloat($('pOld').value)||null;const desc=$('pDesc').value.trim();const promo=$('pPromo').checked;
+  const name=$('pName').value.trim(),cat=$('pCat').value,price=parseFloat($('pPrice').value);
+  const oldPrice=parseFloat($('pOld').value)||null,desc=$('pDesc').value.trim(),promo=$('pPromo').checked;
   if(!name||isNaN(price)){toast('Preencha nome e preço','error');return}
   const list=load(KEYS.PRODUCTS,[]);
-  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id:id,name:name,cat:cat,price:price,oldPrice:oldPrice,desc:desc,promo:promo}}
-  else list.push({id:id,name:name,cat:cat,price:price,oldPrice:oldPrice,desc:desc,promo:promo});
-  save(KEYS.PRODUCTS,list);closeModal();renderProducts();renderDashboard();toast('Salvo');
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id,name,cat,price,oldPrice,desc,promo}}
+  else list.push({id,name,cat,price,oldPrice,desc,promo});
+  save(KEYS.PRODUCTS,list);closeModal();renderProducts();renderDashboard();renderChart();toast('Salvo')
 }
-function deleteProduct(id){if(!confirm('Excluir?'))return;save(KEYS.PRODUCTS,load(KEYS.PRODUCTS,[]).filter(p=>p.id!==id));renderProducts();renderDashboard();toast('Excluído')}
+async function deleteProduct(id){const ok=await confirmDialog('Excluir produto?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.PRODUCTS,load(KEYS.PRODUCTS,[]).filter(p=>p.id!==id));renderProducts();renderDashboard();renderChart();toast('Excluído')}
 
+/* PROMOS */
 function renderPromos(){
   const list=load(KEYS.PROMOS,[]);const el=$('promosList');
-  if(list.length===0){el.innerHTML='<div class="empty-state">Nenhuma promoção</div>';return}
+  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-zap"/></svg>Nenhuma promoção</div>';return}
   el.innerHTML=list.map(p=>`<div class="item">
     <div class="item-header"><div style="flex:1">
       <div class="item-title">${esc(p.title)}</div>
@@ -480,7 +601,8 @@ function renderPromos(){
     <div class="item-actions">
       <button class="btn btn-secondary btn-sm" onclick="editPromo(${p.id})"><svg><use href="#i-edit"/></svg>Editar</button>
       <button class="btn btn-danger btn-sm" onclick="deletePromo(${p.id})"><svg><use href="#i-trash"/></svg>Excluir</button>
-    </div></div>`).join('');
+    </div>
+  </div>`).join('');
 }
 function openPromoForm(promo){
   const isEdit=!!promo;const p=promo||{id:Date.now(),title:'',desc:'',price:'',targetProductId:1};
@@ -497,18 +619,19 @@ function openPromoForm(promo){
 }
 function editPromo(id){const p=load(KEYS.PROMOS,[]).find(x=>x.id===id);if(p)openPromoForm(p)}
 function savePromo(id,isEdit){
-  const title=$('prTitle').value.trim();const desc=$('prDesc').value.trim();const price=$('prPrice').value.trim();const targetProductId=parseInt($('prTarget').value);
+  const title=$('prTitle').value.trim(),desc=$('prDesc').value.trim(),price=$('prPrice').value.trim(),targetProductId=parseInt($('prTarget').value);
   if(!title||!price){toast('Preencha título e preço','error');return}
   const list=load(KEYS.PROMOS,[]);
-  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id:id,title:title,desc:desc,price:price,targetProductId:targetProductId}}
-  else list.push({id:id,title:title,desc:desc,price:price,targetProductId:targetProductId});
-  save(KEYS.PROMOS,list);closeModal();renderPromos();renderDashboard();toast('Salvo');
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id,title,desc,price,targetProductId}}
+  else list.push({id,title,desc,price,targetProductId});
+  save(KEYS.PROMOS,list);closeModal();renderPromos();renderDashboard();toast('Salvo')
 }
-function deletePromo(id){if(!confirm('Excluir?'))return;save(KEYS.PROMOS,load(KEYS.PROMOS,[]).filter(p=>p.id!==id));renderPromos();renderDashboard();toast('Excluído')}
+async function deletePromo(id){const ok=await confirmDialog('Excluir promoção?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.PROMOS,load(KEYS.PROMOS,[]).filter(p=>p.id!==id));renderPromos();renderDashboard();toast('Excluído')}
 
+/* TESTIMONIALS */
 function renderTestimonials(){
   const list=load(KEYS.TESTIMONIALS,[]);const el=$('testimonialsList');
-  if(list.length===0){el.innerHTML='<div class="empty-state">Nenhum depoimento</div>';return}
+  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-msg"/></svg>Nenhum depoimento</div>';return}
   el.innerHTML=list.map(t=>`<div class="item">
     <div class="item-header"><div style="flex:1">
       <div class="item-title">${esc(t.author)}</div>
@@ -518,7 +641,8 @@ function renderTestimonials(){
     <div class="item-actions">
       <button class="btn btn-secondary btn-sm" onclick="editTestimonial(${t.id})"><svg><use href="#i-edit"/></svg>Editar</button>
       <button class="btn btn-danger btn-sm" onclick="deleteTestimonial(${t.id})"><svg><use href="#i-trash"/></svg>Excluir</button>
-    </div></div>`).join('');
+    </div>
+  </div>`).join('');
 }
 function openTestimonialForm(t){
   const isEdit=!!t;const obj=t||{id:Date.now(),text:'',author:'',rating:5};
@@ -532,18 +656,19 @@ function openTestimonialForm(t){
 }
 function editTestimonial(id){const t=load(KEYS.TESTIMONIALS,[]).find(x=>x.id===id);if(t)openTestimonialForm(t)}
 function saveTestimonial(id,isEdit){
-  const author=$('tAuthor').value.trim();const text=$('tText').value.trim();const rating=Math.max(1,Math.min(5,parseInt($('tRating').value)||5));
+  const author=$('tAuthor').value.trim(),text=$('tText').value.trim(),rating=Math.max(1,Math.min(5,parseInt($('tRating').value)||5));
   if(!author||!text){toast('Preencha todos os campos','error');return}
   const list=load(KEYS.TESTIMONIALS,[]);
-  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id:id,author:author,text:text,rating:rating}}
-  else list.push({id:id,author:author,text:text,rating:rating});
-  save(KEYS.TESTIMONIALS,list);closeModal();renderTestimonials();renderDashboard();toast('Salvo');
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id,author,text,rating}}
+  else list.push({id,author,text,rating});
+  save(KEYS.TESTIMONIALS,list);closeModal();renderTestimonials();renderDashboard();toast('Salvo')
 }
-function deleteTestimonial(id){if(!confirm('Excluir?'))return;save(KEYS.TESTIMONIALS,load(KEYS.TESTIMONIALS,[]).filter(t=>t.id!==id));renderTestimonials();renderDashboard();toast('Excluído')}
+async function deleteTestimonial(id){const ok=await confirmDialog('Excluir depoimento?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.TESTIMONIALS,load(KEYS.TESTIMONIALS,[]).filter(t=>t.id!==id));renderTestimonials();renderDashboard();toast('Excluído')}
 
+/* FAQ */
 function renderFaq(){
   const list=load(KEYS.FAQ,[]);const el=$('faqList');
-  if(list.length===0){el.innerHTML='<div class="empty-state">Nenhuma pergunta</div>';return}
+  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-help"/></svg>Nenhuma pergunta</div>';return}
   el.innerHTML=list.map(f=>`<div class="item">
     <div class="item-header"><div style="flex:1">
       <div class="item-title">${esc(f.q)}</div>
@@ -552,7 +677,8 @@ function renderFaq(){
     <div class="item-actions">
       <button class="btn btn-secondary btn-sm" onclick="editFaq(${f.id})"><svg><use href="#i-edit"/></svg>Editar</button>
       <button class="btn btn-danger btn-sm" onclick="deleteFaq(${f.id})"><svg><use href="#i-trash"/></svg>Excluir</button>
-    </div></div>`).join('');
+    </div>
+  </div>`).join('');
 }
 function openFaqForm(f){
   const isEdit=!!f;const obj=f||{id:Date.now(),q:'',a:''};
@@ -565,15 +691,113 @@ function openFaqForm(f){
 }
 function editFaq(id){const f=load(KEYS.FAQ,[]).find(x=>x.id===id);if(f)openFaqForm(f)}
 function saveFaq(id,isEdit){
-  const q=$('fQ').value.trim();const a=$('fA').value.trim();
+  const q=$('fQ').value.trim(),a=$('fA').value.trim();
   if(!q||!a){toast('Preencha pergunta e resposta','error');return}
   const list=load(KEYS.FAQ,[]);
-  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id:id,q:q,a:a}}
-  else list.push({id:id,q:q,a:a});
-  save(KEYS.FAQ,list);closeModal();renderFaq();toast('Salvo');
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={id,q,a}}
+  else list.push({id,q,a});
+  save(KEYS.FAQ,list);closeModal();renderFaq();toast('Salvo')
 }
-function deleteFaq(id){if(!confirm('Excluir?'))return;save(KEYS.FAQ,load(KEYS.FAQ,[]).filter(f=>f.id!==id));renderFaq();toast('Excluído')}
+async function deleteFaq(id){const ok=await confirmDialog('Excluir pergunta?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.FAQ,load(KEYS.FAQ,[]).filter(f=>f.id!==id));renderFaq();toast('Excluído')}
 
+/* USERS */
+function renderUsers(){
+  const list=load(KEYS.USERS,[]);
+  const search=($('userSearch')?.value||'').toLowerCase();
+  const filtered=search?list.filter(u=>(u.name+u.username).toLowerCase().includes(search)):list;
+  const el=$('usersList');
+  if(filtered.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-users"/></svg>Nenhum usuário encontrado</div>';return}
+  el.innerHTML=filtered.map(u=>`<div class="item">
+    <div class="rg-user-head" style="border:none;padding:0">
+      <div class="rg-avatar">${esc((u.name||'U').charAt(0).toUpperCase())}</div>
+      <div class="rg-user-info">
+        <h4>${esc(u.name)}</h4>
+        <p>${esc(u.username)} · ${esc(u.lastSeen||'')}</p>
+      </div>
+      <span class="tag ${u.banned?'banned':'active'}">${u.banned?'Banido':'Ativo'}</span>
+    </div>
+    <div class="item-actions">
+      ${u.banned
+        ?`<button class="btn btn-success btn-sm" onclick="unbanUser(${u.id})"><svg><use href="#i-check"/></svg>Desbanir</button>`
+        :`<button class="btn btn-danger btn-sm" onclick="banUser(${u.id})"><svg><use href="#i-ban"/></svg>Banir</button>`}
+      <button class="btn btn-secondary btn-sm" onclick="editUser(${u.id})"><svg><use href="#i-edit"/></svg>Editar</button>
+      <button class="btn btn-secondary btn-sm" onclick="deleteUser(${u.id})"><svg><use href="#i-trash"/></svg>Excluir</button>
+    </div>
+  </div>`).join('');
+}
+async function banUser(id){
+  const ok=await confirmDialog('Banir usuário?','O usuário perderá acesso à loja.','Banir');if(!ok)return;
+  const list=load(KEYS.USERS,[]);const u=list.find(x=>x.id===id);if(u)u.banned=true;
+  save(KEYS.USERS,list);renderUsers();toast('Usuário banido')
+}
+function unbanUser(id){
+  const list=load(KEYS.USERS,[]);const u=list.find(x=>x.id===id);if(u)u.banned=false;
+  save(KEYS.USERS,list);renderUsers();toast('Usuário desbanido')
+}
+function editUser(id){
+  const list=load(KEYS.USERS,[]);const u=list.find(x=>x.id===id);if(!u)return;
+  $('modalContent').innerHTML=`
+    <div class="modal-header"><h2>Editar Usuário</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Nome</label><input type="text" id="uName" value="${esc(u.name)}"></div>
+    <div class="form-group"><label>Username</label><input type="text" id="uUsername" value="${esc(u.username)}"></div>
+    <div class="check-row"><input type="checkbox" id="uBanned"${u.banned?' checked':''}><label for="uBanned">Usuário banido</label></div>
+    <button class="btn btn-primary btn-block" onclick="saveUser(${u.id})"><svg><use href="#i-save"/></svg>Salvar</button>`;
+  $('modal').classList.add('active');
+}
+function saveUser(id){
+  const list=load(KEYS.USERS,[]);const u=list.find(x=>x.id===id);if(!u)return;
+  u.name=$('uName').value.trim();u.username=$('uUsername').value.trim();u.banned=$('uBanned').checked;
+  save(KEYS.USERS,list);closeModal();renderUsers();toast('Salvo')
+}
+async function deleteUser(id){const ok=await confirmDialog('Excluir usuário?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.USERS,load(KEYS.USERS,[]).filter(u=>u.id!==id));renderUsers();toast('Excluído')}
+
+/* RG */
+function renderRg(){
+  const list=load(KEYS.RG,[]).slice().reverse();const el=$('rgList');
+  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-shield"/></svg>Nenhuma verificação recebida</div>';return}
+  el.innerHTML=list.map(r=>`<div class="item">
+    <div class="rg-user-head">
+      <div class="rg-avatar">${esc((r.userName||'U').charAt(0).toUpperCase().replace('@',''))}</div>
+      <div class="rg-user-info">
+        <h4>${esc(r.userName||'Usuário')}</h4>
+        <p>ID: ${r.userId||'—'} · ${esc(r.date||'')}</p>
+      </div>
+      <span class="tag ${r.status}">${labelStatus(r.status)}</span>
+    </div>
+    <div class="rg-gallery">
+      <div class="rg-thumb" onclick="viewRg('${r.id}','front')">
+        ${r.front?'<img src="'+r.front+'"><span class="rg-label">FRENTE</span>':'<svg style="width:24px;height:24px"><use href="#i-image"/></svg>'}
+      </div>
+      <div class="rg-thumb" onclick="viewRg('${r.id}','back')">
+        ${r.back?'<img src="'+r.back+'"><span class="rg-label">VERSO</span>':'<svg style="width:24px;height:24px"><use href="#i-image"/></svg>'}
+      </div>
+    </div>
+    ${r.status==='pending'
+      ?`<div class="item-actions">
+        <button class="btn btn-success btn-sm" onclick="approveRg('${r.id}')"><svg><use href="#i-check"/></svg>Aprovar</button>
+        <button class="btn btn-danger btn-sm" onclick="rejectRg('${r.id}')"><svg><use href="#i-x"/></svg>Reprovar</button>
+      </div>`
+      :`<div class="item-actions">
+        <button class="btn btn-warning btn-sm" onclick="resetRg('${r.id}')"><svg><use href="#i-refresh"/></svg>Reabrir</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteRg('${r.id}')"><svg><use href="#i-trash"/></svg>Excluir</button>
+      </div>`}
+  </div>`).join('');
+}
+function labelStatus(s){return s==='approved'?'Aprovado':s==='rejected'?'Reprovado':'Pendente'}
+function approveRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='approved';r.reviewedAt=Date.now();save(KEYS.RG,list);renderRg();renderDashboard();toast('RG aprovado')}
+function rejectRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='rejected';r.reviewedAt=Date.now();save(KEYS.RG,list);renderRg();renderDashboard();toast('RG reprovado','warning')}
+function resetRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='pending';save(KEYS.RG,list);renderRg();renderDashboard();toast('Reaberto')}
+async function deleteRg(id){const ok=await confirmDialog('Excluir pedido?','Essa ação não pode ser desfeita.','Excluir');if(!ok)return;save(KEYS.RG,load(KEYS.RG,[]).filter(r=>r.id!==id));renderRg();renderDashboard();toast('Excluído')}
+function viewRg(id,side){
+  const r=load(KEYS.RG,[]).find(x=>x.id===id);if(!r)return;
+  const img=side==='front'?r.front:r.back;
+  $('rgViewBody').innerHTML=img
+    ?'<img src="'+img+'" style="width:100%;border-radius:16px;display:block;">'
+    :'<div style="text-align:center;padding:40px;color:var(--text2)">Imagem indisponível</div>';
+  $('rgViewModal').classList.add('active');
+}
+
+/* TEXTS */
 function loadTextsForm(){
   const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
   const map={tStoreName:'storeName',tBalanceLabel:'balanceLabel',tAddBalanceText:'addBalanceText',tSearchPlaceholder:'searchPlaceholder',tSectionTitleProducts:'sectionTitleProducts',tSectionTitleTestimonials:'sectionTitleTestimonials',tSectionTitleFaq:'sectionTitleFaq',tPromoBadgeText:'promoBadgeText',tPromoButtonText:'promoButtonText',tCartButtonText:'cartButtonText',tAddToCartText:'addToCartText',tCheckoutText:'checkoutText',tPixText:'pixText',tCnpj:'cnpj',tHours:'hours',tTermsText:'termsText',tTermsContent:'termsContent',tPrivacyText:'privacyText',tPrivacyContent:'privacyContent',tCopyrightText:'copyrightText',tAdminLinkText:'adminLinkText',tMaintenanceBanner:'maintenanceBanner'};
@@ -583,39 +807,10 @@ function saveTexts(){
   const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
   const map={tStoreName:'storeName',tBalanceLabel:'balanceLabel',tAddBalanceText:'addBalanceText',tSearchPlaceholder:'searchPlaceholder',tSectionTitleProducts:'sectionTitleProducts',tSectionTitleTestimonials:'sectionTitleTestimonials',tSectionTitleFaq:'sectionTitleFaq',tPromoBadgeText:'promoBadgeText',tPromoButtonText:'promoButtonText',tCartButtonText:'cartButtonText',tAddToCartText:'addToCartText',tCheckoutText:'checkoutText',tPixText:'pixText',tCnpj:'cnpj',tHours:'hours',tTermsText:'termsText',tTermsContent:'termsContent',tPrivacyText:'privacyText',tPrivacyContent:'privacyContent',tCopyrightText:'copyrightText',tAdminLinkText:'adminLinkText',tMaintenanceBanner:'maintenanceBanner'};
   Object.keys(map).forEach(elId=>{const el=$(elId);if(el)s[map[elId]]=el.value.trim()});
-  save(KEYS.SETTINGS,s);toast('Textos salvos');
+  save(KEYS.SETTINGS,s);toast('Textos salvos')
 }
 
-function renderRg(){
-  const list=load(KEYS.RG,[]).slice().reverse();const el=$('rgList');
-  if(list.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-shield"/></svg>Nenhuma verificação recebida</div>';return}
-  el.innerHTML=list.map(r=>`<div class="item">
-    <div class="item-header"><div style="flex:1">
-      <div class="item-title">${esc(r.userName||'Usuário')}</div>
-      <div class="item-sub">ID: ${r.userId||'—'} • ${esc(r.date||'')}</div>
-      <div style="margin-top:8px"><span class="tag ${r.status}">${labelStatus(r.status)}</span></div>
-    </div></div>
-    <div class="rg-photos">
-      <div class="rg-photo" onclick="viewRg('${r.id}','front')">${r.front?'<img src="'+r.front+'">':'Frente'}</div>
-      <div class="rg-photo" onclick="viewRg('${r.id}','back')">${r.back?'<img src="'+r.back+'">':'Verso'}</div>
-    </div>
-    ${r.status==='pending'
-      ?`<div class="item-actions"><button class="btn btn-success btn-sm" onclick="approveRg('${r.id}')"><svg><use href="#i-check"/></svg>Aprovar</button><button class="btn btn-danger btn-sm" onclick="rejectRg('${r.id}')"><svg><use href="#i-x"/></svg>Reprovar</button></div>`
-      :`<div class="item-actions"><button class="btn btn-warning btn-sm" onclick="resetRg('${r.id}')"><svg><use href="#i-refresh"/></svg>Reabrir</button><button class="btn btn-danger btn-sm" onclick="deleteRg('${r.id}')"><svg><use href="#i-trash"/></svg>Excluir</button></div>`}
-  </div>`).join('');
-}
-function labelStatus(s){return s==='approved'?'Aprovado':s==='rejected'?'Reprovado':'Pendente'}
-function approveRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='approved';r.reviewedAt=Date.now();save(KEYS.RG,list);renderRg();renderDashboard();toast('Aprovado')}
-function rejectRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='rejected';r.reviewedAt=Date.now();save(KEYS.RG,list);renderRg();renderDashboard();toast('Reprovado')}
-function resetRg(id){const list=load(KEYS.RG,[]);const r=list.find(x=>x.id===id);if(!r)return;r.status='pending';save(KEYS.RG,list);renderRg();renderDashboard();toast('Reaberto')}
-function deleteRg(id){if(!confirm('Excluir?'))return;save(KEYS.RG,load(KEYS.RG,[]).filter(r=>r.id!==id));renderRg();renderDashboard();toast('Excluído')}
-function viewRg(id,side){
-  const r=load(KEYS.RG,[]).find(x=>x.id===id);if(!r)return;
-  const img=side==='front'?r.front:r.back;
-  $('rgViewBody').innerHTML=img?'<img src="'+img+'" style="width:100%;border-radius:12px;display:block;">':'<div style="text-align:center;padding:40px;color:var(--text2)">Imagem indisponível</div>';
-  $('rgViewModal').classList.add('active');
-}
-
+/* SETTINGS */
 function loadSettingsForm(){
   const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
   $('setWhatsapp').value=s.whatsapp||'';$('setTelegram').value=s.telegram||'';
@@ -625,26 +820,13 @@ function saveSettings(){
   const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
   s.whatsapp=$('setWhatsapp').value.trim();s.telegram=$('setTelegram').value.trim();
   save(KEYS.SETTINGS,s);
-  const newPass=$('setNewPass').value.trim();
-  if(newPass){localStorage.setItem(KEYS.ADMIN_PASS,newPass);$('setNewPass').value='';toast('Senha atualizada')}
-  toast('Configurações salvas');
-}
-function resetAll(){
-  if(!confirm('Apagar TODOS os dados salvos?'))return;
-  if(!confirm('Última confirmação: apagar mesmo?'))return;
-  Object.keys(KEYS).forEach(k=>localStorage.removeItem(KEYS[k]));
-  toast('Resetado');setTimeout(()=>location.reload(),800);
+  const np=$('setNewPass').value.trim();
+  if(np){localStorage.setItem(KEYS.ADMIN_PASS,np);$('setNewPass').value='';toast('Senha atualizada')}
+  toast('Configurações salvas')
 }
 
 function closeModal(){$('modal').classList.remove('active');$('modalContent').innerHTML=''}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});
-
-setInterval(()=>{
-  const app=$('appScreen');
-  if(!app||app.style.display==='none')return;
-  renderDashboard();
-  if($('page-rg').classList.contains('active'))renderRg();
-},3000);
 
 if(sessionStorage.getItem('js_admin_logged')==='true'){showApp()}else{$('loginScreen').style.display='flex'}
 </script>
