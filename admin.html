@@ -16,7 +16,7 @@ svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:ro
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:18px}
 .lock-badge{width:88px;height:88px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center}
 .lock-badge svg{width:40px;height:40px}
-#loginScreen h1{font-size:24px;font-weight:700;text-align:center;letter-spacing:-.4px}
+#loginScreen h1{font-size:24px;font-weight:800;text-align:center;letter-spacing:-.4px}
 #loginScreen p{font-size:14px;color:var(--text2);text-align:center}
 #loginScreen input{width:100%;max-width:360px;padding:16px;border:1px solid var(--border);border-radius:16px;text-align:center;font-size:16px;background:var(--surface);color:var(--text);outline:none;letter-spacing:4px;transition:border-color .2s}
 #loginScreen input:focus{border-color:var(--primary)}
@@ -109,7 +109,7 @@ main{padding:20px;display:flex;flex-direction:column;gap:18px}
 .modal-header h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
 .close-btn{background:none;border:none;font-size:28px;color:var(--text2);cursor:pointer;line-height:1;padding:0 6px}
 
-/* CONFIRM DIALOG (custom, bonito) */
+/* CONFIRM DIALOG */
 .dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:300;padding:24px;opacity:0;visibility:hidden;transition:opacity .25s;backdrop-filter:blur(4px)}
 .dialog-overlay.active{opacity:1;visibility:visible}
 .dialog{background:var(--bg);border-radius:22px;padding:28px 24px 20px;max-width:340px;width:100%;text-align:center;transform:scale(.92);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
@@ -158,10 +158,15 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
 .nav-item.active svg{stroke-width:2.4}
 .nav-item .nav-badge{position:absolute;top:4px;right:calc(50% - 24px);background:var(--error);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
 
-/* SEARCH BAR */
+/* SEARCH + FILTERS */
 .search-input-wrap{position:relative;display:flex;align-items:center}
 .search-input-wrap svg{position:absolute;left:14px;width:18px;height:18px;color:var(--text2);pointer-events:none}
 .search-input-wrap input{padding-left:44px !important}
+.filter-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.filter-chips::-webkit-scrollbar{display:none}
+.filter-chip{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s}
+.filter-chip.active{background:var(--primary);color:var(--contrast);border-color:var(--primary)}
+.count-badge{font-size:12px;color:var(--text2);font-weight:600;margin-top:-8px}
 </style>
 </head>
 <body>
@@ -232,6 +237,7 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
   </div>
 
   <main>
+    <!-- DASHBOARD -->
     <section class="page active" id="page-dashboard">
       <div class="page-header"><h2>Dashboard</h2><p>Visão geral da loja</p></div>
       <div class="stat-grid">
@@ -240,13 +246,11 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
         <div class="stat-card"><span class="label">Depoimentos</span><span class="value" id="statTestimonials">0</span><span class="sub">exibidos</span></div>
         <div class="stat-card"><span class="label">RGs pendentes</span><span class="value" id="statRgPending" style="color:var(--warning)">0</span><span class="sub">aguardando</span></div>
       </div>
-
       <div class="chart-card">
         <h3><svg><use href="#i-chart"/></svg>Produtos por categoria</h3>
         <div class="chart-bars" id="chartBars"></div>
         <div class="chart-labels" id="chartLabels"></div>
       </div>
-
       <div class="card">
         <h3><svg><use href="#i-info"/></svg>Status da Loja</h3>
         <div class="form-group">
@@ -257,7 +261,6 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
           </select>
         </div>
       </div>
-
       <div class="card">
         <h3><svg><use href="#i-zap"/></svg>Ações Rápidas</h3>
         <button class="btn btn-primary btn-block" onclick="switchTab('products')"><svg><use href="#i-box"/></svg>Gerenciar Produtos</button>
@@ -267,43 +270,52 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
       </div>
     </section>
 
+    <!-- PRODUTOS -->
     <section class="page" id="page-products">
-      <div class="page-header"><h2>Produtos</h2><p>Gerencie o catálogo completo</p></div>
+      <div class="page-header"><h2>Produtos</h2><p>Catálogo completo • 15 por categoria</p></div>
       <div class="search-input-wrap">
         <svg><use href="#i-search"/></svg>
-        <input type="text" id="productSearch" placeholder="Buscar produto..." oninput="renderProducts()">
+        <input type="text" id="productSearch" placeholder="Buscar por nome ou descrição..." oninput="renderProducts()">
       </div>
+      <div class="filter-chips" id="productCatFilters"></div>
+      <div class="count-badge" id="productCountLabel">0 produtos</div>
       <button class="btn btn-primary btn-block" onclick="openProductForm()"><svg><use href="#i-plus"/></svg>Novo Produto</button>
       <div id="productsList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
+    <!-- PROMOS -->
     <section class="page" id="page-promos">
       <div class="page-header"><h2>Promoções</h2><p>Slides do carrossel principal</p></div>
       <button class="btn btn-primary btn-block" onclick="openPromoForm()"><svg><use href="#i-plus"/></svg>Nova Promoção</button>
       <div id="promosList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
+    <!-- DEPOIMENTOS -->
     <section class="page" id="page-testimonials">
       <div class="page-header"><h2>Depoimentos</h2><p>O que os clientes dizem</p></div>
       <button class="btn btn-primary btn-block" onclick="openTestimonialForm()"><svg><use href="#i-plus"/></svg>Novo Depoimento</button>
       <div id="testimonialsList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
+    <!-- FAQ -->
     <section class="page" id="page-faq">
       <div class="page-header"><h2>FAQ</h2><p>Perguntas frequentes do site</p></div>
       <button class="btn btn-primary btn-block" onclick="openFaqForm()"><svg><use href="#i-plus"/></svg>Nova Pergunta</button>
       <div id="faqList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
+    <!-- USUÁRIOS -->
     <section class="page" id="page-users">
       <div class="page-header"><h2>Usuários</h2><p>Gerencie e bloqueie usuários da loja</p></div>
       <div class="search-input-wrap">
         <svg><use href="#i-search"/></svg>
         <input type="text" id="userSearch" placeholder="Buscar por nome, ID ou username..." oninput="renderUsers()">
       </div>
+      <div class="count-badge" id="userCountLabel">0 usuários</div>
       <div id="usersList" style="display:flex;flex-direction:column;gap:12px;"></div>
     </section>
 
+    <!-- TEXTOS -->
     <section class="page" id="page-texts">
       <div class="page-header"><h2>Textos da Loja</h2><p>Edite cada texto que aparece no site</p></div>
       <div class="card">
@@ -352,11 +364,13 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
       <button class="btn btn-primary btn-block" onclick="saveTexts()"><svg><use href="#i-save"/></svg>Salvar Textos</button>
     </section>
 
+    <!-- RG -->
     <section class="page" id="page-rg">
       <div class="page-header"><h2>Verificações +18</h2><p>Aprove ou reprove os documentos enviados</p></div>
       <div id="rgList" style="display:flex;flex-direction:column;gap:14px;"></div>
     </section>
 
+    <!-- CONFIG -->
     <section class="page" id="page-settings">
       <div class="page-header"><h2>Configurações</h2><p>Links de suporte e segurança</p></div>
       <div class="card">
@@ -393,7 +407,6 @@ body.dark .tag.active{background:#064e3b;color:#6ee7b7}
   </div>
 </div>
 
-<!-- DIALOG CUSTOM -->
 <div class="dialog-overlay" id="dialog">
   <div class="dialog">
     <div class="dialog-icon"><svg><use href="#i-alert"/></svg></div>
@@ -416,8 +429,129 @@ const DEFAULT_SETTINGS={storeName:'Joãozinho Store',cnpj:'00.000.000/0000-00',h
 const DEFAULT_TESTIMONIALS=[{id:1,text:'Comprei o IPTV Elite e a qualidade é surreal.',author:'Carlos M.',rating:5},{id:2,text:'Melhor preço do mercado. Suporte excelente.',author:'Ana Paula S.',rating:5},{id:3,text:'Já é a terceira vez que compro. Recomendo!',author:'Roberto F.',rating:5}];
 const DEFAULT_PROMOS=[{id:1,targetProductId:1,title:'Netflix 4K',desc:'Qualidade máxima para a família.',price:'14,90'},{id:2,targetProductId:42,title:'IPTV Elite 90 dias',desc:'3 meses de estabilidade premium.',price:'59,90'},{id:3,targetProductId:62,title:'Canva Pro 6 meses',desc:'Design profissional por metade do preço.',price:'18,00'}];
 const DEFAULT_FAQ=[{id:1,q:'Como recebo meu produto após o pagamento?',a:'Assim que o PIX for confirmado, o bot libera os dados de acesso automaticamente.'},{id:2,q:'O pagamento via PIX é seguro?',a:'Sim, tecnologia oficial do Banco Central.'},{id:3,q:'Qual o prazo de garantia?',a:'De 30 a 180 dias conforme produto.'},{id:4,q:'Posso pedir reembolso?',a:'Sim, até 7 dias se houver defeito.'},{id:5,q:'Como funciona o suporte?',a:'100% online e automatizado via chat.'}];
-const DEFAULT_PRODUCTS=[{id:1,cat:'filmes',name:'Netflix 4K',price:14.90,oldPrice:39.90,promo:true,desc:'Plano Premium 4K • 4 telas • 30 dias'},{id:2,cat:'filmes',name:'Disney+ Padrão',price:9.90,oldPrice:27.90,promo:true,desc:'Catálogo Disney completo'},{id:42,cat:'iptv',name:'IPTV Elite 90 dias',price:59.90,oldPrice:75.00,promo:true,desc:'3 meses premium'},{id:62,cat:'produtividade',name:'Canva Pro 6 meses',price:18.00,oldPrice:59.90,promo:true,desc:'6 meses de Canva Pro'}];
+
+/* CATÁLOGO COMPLETO – 15 produtos por categoria (igual ao home) */
+const DEFAULT_PRODUCTS=[
+  /* FILMES (15) */
+  {id:1,cat:'filmes',name:'Netflix 4K',price:14.90,oldPrice:39.90,promo:true,desc:'Plano Premium 4K • 4 telas • 30 dias'},
+  {id:2,cat:'filmes',name:'Disney+ Padrão',price:9.90,oldPrice:27.90,promo:true,desc:'Catálogo completo Disney, Marvel e Star Wars'},
+  {id:3,cat:'filmes',name:'HBO Max',price:12.90,desc:'Séries e filmes exclusivos • 30 dias'},
+  {id:4,cat:'filmes',name:'Prime Video',price:8.90,desc:'Amazon Prime Video completo'},
+  {id:5,cat:'filmes',name:'Star+',price:11.90,desc:'Star+ com conteúdo original e ESPN'},
+  {id:6,cat:'filmes',name:'Paramount+',price:7.90,desc:'Paramount+ completo • 30 dias'},
+  {id:7,cat:'filmes',name:'Apple TV+',price:9.90,desc:'Conteúdo original Apple em 4K'},
+  {id:8,cat:'filmes',name:'Globoplay Premium',price:6.90,desc:'Globoplay + canais ao vivo'},
+  {id:9,cat:'filmes',name:'Crunchyroll',price:8.90,desc:'Animes em alta qualidade'},
+  {id:10,cat:'filmes',name:'Telecine',price:10.90,desc:'Telecine Play completo'},
+  {id:11,cat:'filmes',name:'Looke',price:5.90,desc:'Looke filmes e séries'},
+  {id:12,cat:'filmes',name:'MUBI',price:11.90,desc:'Cinema de autor e clássicos'},
+  {id:13,cat:'filmes',name:'Netflix + Disney+',price:22.90,desc:'Combo Netflix 4K + Disney+'},
+  {id:14,cat:'filmes',name:'HBO + Prime',price:19.90,desc:'Combo HBO Max + Prime Video'},
+  {id:15,cat:'filmes',name:'Star+ Anual',price:99.90,desc:'Star+ por 12 meses'},
+  /* FUTEBOL (15) */
+  {id:21,cat:'futebol',name:'Premiere',price:29.90,desc:'Todos os jogos do Brasileirão'},
+  {id:22,cat:'futebol',name:'SporTV',price:24.90,desc:'SporTV completo + eventos'},
+  {id:23,cat:'futebol',name:'ESPN',price:19.90,desc:'ESPN + eventos internacionais'},
+  {id:24,cat:'futebol',name:'Star+ ESPN',price:22.90,desc:'Star+ com todos os canais ESPN'},
+  {id:25,cat:'futebol',name:'DAZN',price:18.90,desc:'Lutas e futebol europeu'},
+  {id:26,cat:'futebol',name:'Combate',price:16.90,desc:'UFC e MMA ao vivo'},
+  {id:27,cat:'futebol',name:'BandSports',price:14.90,desc:'BandSports + futebol'},
+  {id:28,cat:'futebol',name:'Premier League',price:34.90,desc:'Premier League completa'},
+  {id:29,cat:'futebol',name:'La Liga',price:29.90,desc:'La Liga ao vivo'},
+  {id:30,cat:'futebol',name:'Champions League',price:39.90,desc:'UEFA Champions League'},
+  {id:31,cat:'futebol',name:'Copa do Brasil',price:19.90,desc:'Copa do Brasil completa'},
+  {id:32,cat:'futebol',name:'Libertadores',price:24.90,desc:'Copa Libertadores'},
+  {id:33,cat:'futebol',name:'Futebol Europeu',price:27.90,desc:'Principais ligas europeias'},
+  {id:34,cat:'futebol',name:'NBA',price:22.90,desc:'NBA completa ao vivo'},
+  {id:35,cat:'futebol',name:'Pacote Esportes',price:49.90,desc:'Premiere + SporTV + ESPN'},
+  /* IPTV (15) */
+  {id:41,cat:'iptv',name:'IPTV Elite 30 dias',price:25.00,desc:'+30k conteúdos • 4K • canais abertos e fechados'},
+  {id:42,cat:'iptv',name:'IPTV Elite 90 dias',price:59.90,oldPrice:75.00,promo:true,desc:'3 meses de estabilidade premium'},
+  {id:43,cat:'iptv',name:'IPTV Elite Anual',price:149.90,oldPrice:300.00,promo:true,desc:'12 meses + suporte prioritário'},
+  {id:44,cat:'iptv',name:'IPTV Filmes 4K',price:19.90,desc:'Biblioteca de filmes em 4K'},
+  {id:45,cat:'iptv',name:'IPTV Séries',price:22.90,desc:'Séries atualizadas diariamente'},
+  {id:46,cat:'iptv',name:'P2P Anti-Travamento',price:20.00,desc:'Solução para transmissões estáveis'},
+  {id:47,cat:'iptv',name:'IPTV Kids',price:15.90,desc:'Pacote infantil completo'},
+  {id:48,cat:'iptv',name:'IPTV Esportes',price:29.90,desc:'Todos os canais de esporte'},
+  {id:49,cat:'iptv',name:'IPTV Adulto +18',price:35.00,desc:'Pacote adulto (requer verificação)'},
+  {id:50,cat:'iptv',name:'IPTV 4K Full',price:39.90,desc:'Todos os canais em 4K'},
+  {id:51,cat:'iptv',name:'IPTV Multi-Telas',price:45.00,desc:'Até 3 dispositivos simultâneos'},
+  {id:52,cat:'iptv',name:'IPTV Teste 7 dias',price:9.90,desc:'Teste completo por 7 dias'},
+  {id:53,cat:'iptv',name:'IPTV Premium BR',price:27.90,desc:'Foco em canais brasileiros'},
+  {id:54,cat:'iptv',name:'IPTV Internacional',price:32.90,desc:'Canais de vários países'},
+  {id:55,cat:'iptv',name:'IPTV + VOD',price:34.90,desc:'IPTV + catálogo de filmes on demand'},
+  /* PRODUTIVIDADE (15) */
+  {id:61,cat:'produtividade',name:'Canva Pro 1 mês',price:9.90,desc:'Conta privada Canva Pro'},
+  {id:62,cat:'produtividade',name:'Canva Pro 6 meses',price:18.00,oldPrice:59.90,promo:true,desc:'6 meses de Canva Pro completo'},
+  {id:63,cat:'produtividade',name:'CapCut Pro',price:12.90,desc:'Edição profissional de vídeos'},
+  {id:64,cat:'produtividade',name:'Office 365',price:24.90,desc:'Word, Excel, PowerPoint + OneDrive'},
+  {id:65,cat:'produtividade',name:'Adobe Creative',price:39.90,desc:'Photoshop + Premiere + Illustrator'},
+  {id:66,cat:'produtividade',name:'ChatGPT Plus',price:29.90,desc:'GPT-4o + geração de imagens • 1 mês'},
+  {id:67,cat:'produtividade',name:'Notion AI',price:19.90,desc:'Notion com inteligência artificial'},
+  {id:68,cat:'produtividade',name:'Midjourney',price:34.90,desc:'Geração de imagens por IA'},
+  {id:69,cat:'produtividade',name:'Figma Pro',price:22.90,desc:'Design de interfaces profissionais'},
+  {id:70,cat:'produtividade',name:'Grammarly Premium',price:14.90,desc:'Correção de textos avançada'},
+  {id:71,cat:'produtividade',name:'LinkedIn Premium',price:27.90,desc:'LinkedIn Premium Career'},
+  {id:72,cat:'produtividade',name:'Duolingo Plus',price:11.90,desc:'Aprenda idiomas sem anúncios'},
+  {id:73,cat:'produtividade',name:'Skillshare',price:16.90,desc:'Cursos de design e criatividade'},
+  {id:74,cat:'produtividade',name:'Envato Elements',price:29.90,desc:'Assets ilimitados para designers'},
+  {id:75,cat:'produtividade',name:'Canva + CapCut',price:24.90,desc:'Combo Canva Pro + CapCut Pro'},
+  /* MÚSICA (15) */
+  {id:81,cat:'musica',name:'Spotify Premium',price:9.90,desc:'Sem anúncios • downloads offline'},
+  {id:82,cat:'musica',name:'YouTube Premium',price:11.90,desc:'Sem anúncios + YouTube Music'},
+  {id:83,cat:'musica',name:'Deezer Premium',price:8.90,desc:'Qualidade HiFi • offline'},
+  {id:84,cat:'musica',name:'Apple Music',price:10.90,desc:'Catálogo completo Apple Music'},
+  {id:85,cat:'musica',name:'Amazon Music',price:7.90,desc:'Amazon Music Unlimited'},
+  {id:86,cat:'musica',name:'Tidal HiFi',price:14.90,desc:'Qualidade de áudio HiFi'},
+  {id:87,cat:'musica',name:'YouTube Music',price:9.90,desc:'YouTube Music Premium'},
+  {id:88,cat:'musica',name:'Spotify Família',price:19.90,desc:'Até 6 contas Spotify'},
+  {id:89,cat:'musica',name:'Audible',price:12.90,desc:'Audiolivros e podcasts'},
+  {id:90,cat:'musica',name:'Podcasts Premium',price:6.90,desc:'Podcasts exclusivos sem anúncios'},
+  {id:91,cat:'musica',name:'SoundCloud Go+',price:8.90,desc:'SoundCloud Go+ completo'},
+  {id:92,cat:'musica',name:'Qobuz',price:16.90,desc:'Áudio de alta resolução'},
+  {id:93,cat:'musica',name:'Spotify + YouTube',price:18.90,desc:'Combo Spotify + YouTube Premium'},
+  {id:94,cat:'musica',name:'Apple Music Família',price:17.90,desc:'Até 6 pessoas no Apple Music'},
+  {id:95,cat:'musica',name:'Deezer HiFi',price:13.90,desc:'Deezer com qualidade HiFi'},
+  /* KIDS (15) */
+  {id:101,cat:'kids',name:'Disney+ Kids',price:9.90,desc:'Perfil infantil protegido'},
+  {id:102,cat:'kids',name:'Gloob',price:6.90,desc:'Canal Gloob completo'},
+  {id:103,cat:'kids',name:'Discovery Kids',price:7.90,desc:'Discovery Kids ao vivo + on demand'},
+  {id:104,cat:'kids',name:'YouTube Kids',price:5.90,desc:'YouTube Kids sem anúncios'},
+  {id:105,cat:'kids',name:'Nick Jr',price:6.90,desc:'Nick Jr + conteúdo infantil'},
+  {id:106,cat:'kids',name:'Cartoon Network',price:8.90,desc:'Cartoon Network completo'},
+  {id:107,cat:'kids',name:'Nickelodeon',price:7.90,desc:'Nickelodeon + Nick Jr'},
+  {id:108,cat:'kids',name:'Disney Junior',price:6.90,desc:'Disney Junior ao vivo'},
+  {id:109,cat:'kids',name:'Pacote Kids',price:19.90,desc:'Disney+ + Gloob + Discovery Kids'},
+  {id:110,cat:'kids',name:'Netflix Kids',price:9.90,desc:'Perfil infantil Netflix'},
+  {id:111,cat:'kids',name:'Prime Video Kids',price:7.90,desc:'Conteúdo infantil Amazon'},
+  {id:112,cat:'kids',name:'Paramount Kids',price:6.90,desc:'Conteúdo infantil Paramount'},
+  {id:113,cat:'kids',name:'Boomerang',price:5.90,desc:'Desenhos clássicos'},
+  {id:114,cat:'kids',name:'Cartoonito',price:5.90,desc:'Canal pré-escolar'},
+  {id:115,cat:'kids',name:'Família Completa',price:29.90,desc:'Disney+ + Netflix Kids + YouTube Kids'},
+  /* ADULTO (15) */
+  {id:121,cat:'adulto',name:'OnlyFans Premium',price:29.90,desc:'Acesso a conteúdos exclusivos'},
+  {id:122,cat:'adulto',name:'Privacy',price:24.90,desc:'Plataforma Privacy completa'},
+  {id:123,cat:'adulto',name:'IPTV +18 Completo',price:35.00,desc:'Pacote adulto com milhares de canais'},
+  {id:124,cat:'adulto',name:'Chaturbate Premium',price:19.90,desc:'Acesso premium Chaturbate'},
+  {id:125,cat:'adulto',name:'Pornhub Premium',price:22.90,desc:'Pornhub Premium 30 dias'},
+  {id:126,cat:'adulto',name:'Brazzers',price:27.90,desc:'Brazzers completo'},
+  {id:127,cat:'adulto',name:'Reality Kings',price:24.90,desc:'Reality Kings Premium'},
+  {id:128,cat:'adulto',name:'BangBros',price:26.90,desc:'BangBros completo'},
+  {id:129,cat:'adulto',name:'ManyVids',price:21.90,desc:'ManyVids Premium'},
+  {id:130,cat:'adulto',name:'Fansly',price:23.90,desc:'Fansly Premium'},
+  {id:131,cat:'adulto',name:'Stripchat Premium',price:18.90,desc:'Stripchat Premium'},
+  {id:132,cat:'adulto',name:'LiveJasmin',price:20.90,desc:'LiveJasmin Premium'},
+  {id:133,cat:'adulto',name:'IPTV Adulto 90 dias',price:79.90,desc:'IPTV +18 por 3 meses'},
+  {id:134,cat:'adulto',name:'Combo OnlyFans + Privacy',price:44.90,desc:'OnlyFans + Privacy juntos'},
+  {id:135,cat:'adulto',name:'Pacote Adulto Full',price:59.90,desc:'IPTV +18 + OnlyFans + Privacy'}
+];
+
 const DEFAULT_USERS=[{id:1,name:'Carlos M.',username:'@carlos_m',banned:false,lastSeen:'Há 2 horas'},{id:2,name:'Ana Paula',username:'@anapaula',banned:false,lastSeen:'Há 1 dia'},{id:3,name:'Roberto F.',username:'@roberto',banned:true,lastSeen:'Há 3 dias'}];
+
+const CAT_LABELS={filmes:'Filmes',futebol:'Futebol',iptv:'IPTV',produtividade:'Produtividade',musica:'Música',kids:'Kids',adulto:'+18'};
+const CAT_FULL={filmes:'Filmes e Séries',futebol:'Futebol Ao Vivo',iptv:'IPTV Completo',produtividade:'Produtividade',musica:'Música',kids:'Kids e Família',adulto:'Adulto +18'};
+
+let currentProductCat='all';
 
 function $(id){return document.getElementById(id)}
 function load(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch(e){return fb}}
@@ -437,7 +571,6 @@ function toast(msg,type){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2500);
 }
 
-/* DIALOG CUSTOM */
 let dialogResolver=null;
 function confirmDialog(title,text,confirmLabel,btnClass){
   return new Promise(res=>{
@@ -500,7 +633,7 @@ function ensureDefaults(){
   if(!localStorage.getItem(KEYS.USERS))save(KEYS.USERS,DEFAULT_USERS);
   if(!localStorage.getItem(KEYS.RG))save(KEYS.RG,[]);
 }
-function renderAll(){renderDashboard();renderChart();renderProducts();renderPromos();renderTestimonials();renderFaq();renderUsers();renderRg();loadSettingsForm();loadTextsForm()}
+function renderAll(){renderDashboard();renderChart();renderProductFilters();renderProducts();renderPromos();renderTestimonials();renderFaq();renderUsers();renderRg();loadSettingsForm();loadTextsForm()}
 
 /* DASHBOARD */
 function renderDashboard(){
@@ -519,7 +652,6 @@ function renderChart(){
   const prods=load(KEYS.PRODUCTS,[]);
   const cats={filmes:0,futebol:0,iptv:0,produtividade:0,musica:0,kids:0,adulto:0};
   prods.forEach(p=>{if(cats[p.cat]!==undefined)cats[p.cat]++});
-  const labels={filmes:'Filmes',futebol:'Futebol',iptv:'IPTV',produtividade:'Produt.',musica:'Música',kids:'Kids',adulto:'+18'};
   const max=Math.max(...Object.values(cats),1);
   const barsEl=$('chartBars'),labelsEl=$('chartLabels');
   barsEl.innerHTML='';labelsEl.innerHTML='';
@@ -528,27 +660,38 @@ function renderChart(){
     const b=document.createElement('div');
     b.className='chart-bar';
     b.style.height=Math.max(pct,4)+'%';
-    b.title=labels[k]+': '+cats[k];
+    b.title=CAT_LABELS[k]+': '+cats[k];
     barsEl.appendChild(b);
     const l=document.createElement('span');
-    l.textContent=labels[k];
+    l.textContent=CAT_LABELS[k];
     labelsEl.appendChild(l);
   });
 }
 function saveStatusQuick(){const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);s.status=$('setStatusQuick').value;save(KEYS.SETTINGS,s);toast('Status atualizado')}
 
 /* PRODUTOS */
+function renderProductFilters(){
+  const el=$('productCatFilters');
+  if(!el)return;
+  const cats=[{id:'all',label:'Todos'},...Object.keys(CAT_FULL).map(k=>({id:k,label:CAT_LABELS[k]}))];
+  el.innerHTML=cats.map(c=>`<button class="filter-chip ${currentProductCat===c.id?'active':''}" onclick="setProductCat('${c.id}')">${c.label}</button>`).join('');
+}
+function setProductCat(cat){currentProductCat=cat;renderProductFilters();renderProducts()}
 function renderProducts(){
   const list=load(KEYS.PRODUCTS,[]);
   const search=($('productSearch')?.value||'').toLowerCase();
-  const filtered=search?list.filter(p=>p.name.toLowerCase().includes(search)||p.cat.toLowerCase().includes(search)):list;
+  let filtered=list;
+  if(currentProductCat!=='all')filtered=filtered.filter(p=>p.cat===currentProductCat);
+  if(search)filtered=filtered.filter(p=>p.name.toLowerCase().includes(search)||(p.desc||'').toLowerCase().includes(search)||p.cat.toLowerCase().includes(search));
   const el=$('productsList');
+  const countEl=$('productCountLabel');
+  if(countEl)countEl.textContent=filtered.length+' produto'+(filtered.length!==1?'s':'');
   if(filtered.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-box"/></svg>Nenhum produto encontrado</div>';return}
   el.innerHTML=filtered.map(p=>`<div class="item">
     <div class="item-header">
       <div style="flex:1">
         <div class="item-title">${esc(p.name)}</div>
-        <div class="item-sub">${esc(p.cat)} • R$ ${Number(p.price).toFixed(2).replace('.',',')}${p.oldPrice?' · De R$ '+Number(p.oldPrice).toFixed(2).replace('.',','):''}</div>
+        <div class="item-sub">${esc(CAT_FULL[p.cat]||p.cat)} • R$ ${Number(p.price).toFixed(2).replace('.',',')}${p.oldPrice?' · De R$ '+Number(p.oldPrice).toFixed(2).replace('.',','):''}</div>
         <div class="item-sub">${esc(p.desc||'')}</div>
       </div>
       ${p.promo?'<span class="tag approved">Promo</span>':''}
@@ -562,7 +705,7 @@ function renderProducts(){
 function openProductForm(product){
   const isEdit=!!product;
   const p=product||{id:Date.now(),cat:'filmes',name:'',price:0,oldPrice:'',promo:false,desc:''};
-  const cats=[['filmes','Filmes e Séries'],['futebol','Futebol Ao Vivo'],['iptv','IPTV Completo'],['produtividade','Produtividade'],['musica','Música'],['kids','Kids e Família'],['adulto','Adulto +18']];
+  const cats=Object.keys(CAT_FULL).map(k=>[k,CAT_FULL[k]]);
   $('modalContent').innerHTML=`
     <div class="modal-header"><h2>${isEdit?'Editar':'Novo'} Produto</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
     <div class="form-group"><label>Nome do produto</label><input type="text" id="pName" value="${esc(p.name)}" placeholder="Ex: Netflix 4K"></div>
@@ -704,8 +847,10 @@ async function deleteFaq(id){const ok=await confirmDialog('Excluir pergunta?','E
 function renderUsers(){
   const list=load(KEYS.USERS,[]);
   const search=($('userSearch')?.value||'').toLowerCase();
-  const filtered=search?list.filter(u=>(u.name+u.username).toLowerCase().includes(search)):list;
+  const filtered=search?list.filter(u=>(u.name+u.username+(u.id||'')).toLowerCase().includes(search)):list;
   const el=$('usersList');
+  const countEl=$('userCountLabel');
+  if(countEl)countEl.textContent=filtered.length+' usuário'+(filtered.length!==1?'s':'');
   if(filtered.length===0){el.innerHTML='<div class="empty-state"><svg><use href="#i-users"/></svg>Nenhum usuário encontrado</div>';return}
   el.innerHTML=filtered.map(u=>`<div class="item">
     <div class="rg-user-head" style="border:none;padding:0">
