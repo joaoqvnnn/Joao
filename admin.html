@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Painel Admin • Joãozinho Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-color:#ffffff;--surface-color:#f8f9fa;--text-primary:#111111;--text-secondary:#666666;--border-color:#e5e7eb;--primary-color:#000000;--primary-contrast:#ffffff;--success-color:#10b981;--error-color:#ef4444;--warning-color:#f59e0b;--star-color:#fbbf24;--toast-bg:#1a1a1a;--toast-text:#ffffff;--radius-sm:8px;--radius-md:16px;--radius-lg:24px;--shadow-sm:0 2px 8px rgba(0,0,0,.05);--shadow-md:0 8px 24px rgba(0,0,0,.08)}
+body.dark-theme{--bg-color:#0a0a0a;--surface-color:#1a1a1a;--text-primary:#ffffff;--text-secondary:#a1a1aa;--border-color:#2a2a2a;--primary-color:#ffffff;--primary-contrast:#000000;--toast-bg:#ffffff;--toast-text:#000000;--shadow-md:0 8px 24px rgba(0,0,0,.5)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body{background:var(--bg-color);color:var(--text-primary);max-width:640px;margin:0 auto;padding-bottom:90px;transition:background .3s,color .3s;overflow-x:hidden}
+
+/* LOGIN */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:14px}
+.lock-badge{width:84px;height:84px;background:var(--surface-color);border:1px solid var(--border-color);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-primary);margin-bottom:6px}
+#loginScreen h1{font-size:22px;font-weight:700;text-align:center}
+#loginScreen p{font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:6px}
+#loginScreen input{width:100%;max-width:360px;padding:16px;border:1px solid var(--border-color);border-radius:var(--radius-md);text-align:center;font-size:16px;background:var(--surface-color);color:var(--text-primary);outline:none;letter-spacing:2px}
+#loginScreen input:focus{border-color:var(--primary-color)}
+#loginScreen .btn-login{width:100%;max-width:360px;padding:16px;border:none;border-radius:var(--radius-md);background:var(--primary-color);color:var(--primary-contrast);font-size:15px;font-weight:700;cursor:pointer}
+#loginScreen .btn-login:active{transform:scale(.98)}
+.err-msg{color:var(--error-color);font-size:12px;font-weight:600;min-height:16px}
+
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:center;padding:16px;gap:8px;position:sticky;top:0;background:var(--bg-color);z-index:20;border-bottom:1px solid var(--border-color)}
+.logo{font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px}
+.badge-admin{background:var(--error-color);color:#fff;font-size:9px;font-weight:800;padding:3px 6px;border-radius:4px;letter-spacing:.5px}
+.header-actions{display:flex;gap:8px}
+.icon-btn{background:var(--surface-color);border:1px solid var(--border-color);color:var(--text-primary);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.icon-btn:active{transform:scale(.95)}
+
+/* TABS */
+.tabs-bar{position:sticky;top:71px;background:var(--bg-color);z-index:19;padding:10px 16px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border-color);display:flex;gap:8px}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab-btn{background:var(--surface-color);border:1px solid var(--border-color);color:var(--text-primary);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.tab-btn.active{background:var(--primary-color);color:var(--primary-contrast);border-color:var(--primary-color)}
+.tab-btn .tbadge{background:var(--error-color);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* MAIN */
+main{padding:16px;display:flex;flex-direction:column;gap:16px}
+.page{display:none;flex-direction:column;gap:14px;animation:fade .3s}
+.page.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page-header h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.page-header p{font-size:13px;color:var(--text-secondary)}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat-card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;display:flex;flex-direction:column;gap:4px}
+.stat-card .label{font-size:10px;color:var(--text-secondary);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .value{font-size:22px;font-weight:700}
+.stat-card .sub{font-size:11px;color:var(--text-secondary)}
+
+/* CARDS */
+.card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;gap:12px}
+.card h3{font-size:14px;font-weight:700}
+
+/* FORMS */
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.form-group input,.form-group textarea,.form-group select{padding:12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-size:14px;background:var(--bg-color);color:var(--text-primary);outline:none;font-family:inherit;resize:vertical;width:100%}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--primary-color)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-primary)}
+.check-row input{width:auto}
+
+/* BUTTONS */
+.btn{padding:12px 18px;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:700;cursor:pointer;transition:transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary-color);color:var(--primary-contrast)}
+.btn-secondary{background:var(--surface-color);color:var(--text-primary);border:1px solid var(--border-color)}
+.btn-success{background:var(--success-color);color:#fff}
+.btn-danger{background:var(--error-color);color:#fff}
+.btn-warning{background:var(--warning-color);color:#fff}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:20px}
+.btn-block{width:100%}
+
+/* ITEM LIST */
+.item{background:var(--surface-color);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;display:flex;flex-direction:column;gap:10px}
+.item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.item-title{font-size:14px;font-weight:700;word-break:break-word}
+.item-sub{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-top:2px;word-break:break-word}
+.item-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-secondary);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty-state .icon-circle{width:64px;height:64px;background:var(--surface-color);border:1px solid var(--border-color);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-secondary)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;justify-content:center;align-items:flex-end;z-index:200;opacity:0;visibility:hidden;transition:all .3s}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-content{background:var(--bg-color);width:100%;max-width:640px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:24px;transform:translateY(100%);transition:transform .3s;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.modal-overlay.active .modal-content{transform:translateY(0)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.modal-header h2{font-size:18px;font-weight:700}
+.close-btn{background:none;border:none;font-size:26px;color:var(--text-secondary);cursor:pointer;line-height:1;padding:0 4px}
+
+/* RG PHOTOS */
+.rg-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rg-photo{background:var(--bg-color);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;aspect-ratio:1.4;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:12px;cursor:pointer;transition:transform .15s}
+.rg-photo:active{transform:scale(.97)}
+.rg-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* TAGS */
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
+.tag.pending{background:#fef3c7;color:#92400e}
+.tag.approved{background:#d1fae5;color:#065f46}
+.tag.rejected{background:#fee2e2;color:#991b1b}
+body.dark-theme .tag.pending{background:#451a03;color:#fcd34d}
+body.dark-theme .tag.approved{background:#064e3b;color:#6ee7b7}
+body.dark-theme .tag.rejected{background:#7f1d1d;color:#fecaca}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;width:90%;max-width:400px}
+.toast{background:var(--toast-bg);color:var(--toast-text);padding:14px 18px;border-radius:var(--radius-md);font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);transform:translateY(20px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{width:22px;height:22px;border-radius:50%;background:var(--success-color);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon.error{background:var(--error-color)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg-color);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 4px;z-index:50}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:none;background:none;color:var(--text-secondary);font-size:10px;font-weight:600;cursor:pointer;border-radius:8px;position:relative}
+.nav-item.active{color:var(--text-primary)}
+.nav-item svg{width:20px;height:20px}
+.nav-item .nav-badge{position:absolute;top:2px;right:calc(50% - 20px);background:var(--error-color);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="lock-badge">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <h1>Painel Administrativo</h1>
+  <p>Digite a senha para gerenciar a loja</p>
+  <input type="password" id="loginPassword" placeholder="• • • • • •" onkeypress="if(event.key==='Enter')tryLogin()">
+  <div class="err-msg" id="loginError"></div>
+  <button class="btn-login" onclick="tryLogin()">Entrar no Painel</button>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="appScreen" style="display:none;">
+
+  <header>
+    <div class="logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Joãozinho <span class="badge-admin">ADMIN</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="logout()" title="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- TABS SUPERIORES -->
+  <div class="tabs-bar" id="tabsBar">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">Início</button>
+    <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Produtos</button>
+    <button class="tab-btn" data-tab="promos" onclick="switchTab('promos')">Promoções</button>
+    <button class="tab-btn" data-tab="testimonials" onclick="switchTab('testimonials')">Depoimentos</button>
+    <button class="tab-btn" data-tab="faq" onclick="switchTab('faq')">FAQ</button>
+    <button class="tab-btn" data-tab="rg" onclick="switchTab('rg')">RG +18 <span class="tbadge" id="rgTabBadge" style="display:none;">0</span></button>
+    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">Config</button>
+  </div>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header"><h2>Dashboard</h2><p>Visão geral da loja</p></div>
+      <div class="stat-grid">
+        <div class="stat-card"><span class="label">Produtos</span><span class="value" id="statProducts">0</span><span class="sub">no catálogo</span></div>
+        <div class="stat-card"><span class="label">Promoções</span><span class="value" id="statPromos">0</span><span class="sub">no carrossel</span></div>
+        <div class="stat-card"><span class="label">Depoimentos</span><span class="value" id="statTestimonials">0</span><span class="sub">exibidos</span></div>
+        <div class="stat-card"><span class="label">RGs pendentes</span><span class="value" id="statRgPending" style="color:var(--warning-color)">0</span><span class="sub">aguardando</span></div>
+      </div>
+      <div class="card">
+        <h3>Status da Loja</h3>
+        <div class="form-group">
+          <label>Status atual</label>
+          <select id="setStatus" onchange="saveStatusQuick()">
+            <option value="active">🟢 Aberta / Ativa</option>
+            <option value="maintenance">🔴 Em Manutenção</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Ações Rápidas</h3>
+        <button class="btn btn-primary btn-block" onclick="switchTab('products')">Gerenciar Produtos</button>
+        <button class="btn btn-secondary btn-block" onclick="switchTab('rg')">Verificar RGs +18</button>
+      </div>
+    </section>
+
+    <!-- PRODUTOS -->
+    <section class="page" id="page-products">
+      <div class="page-header"><h2>Produtos</h2><p>Adicione, edite e remova produtos do catálogo</p></div>
+      <button class="btn btn-primary btn-block" onclick="openProductForm()">+ Novo Produto</button>
+      <div id="productsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </section>
+
+    <!-- PROMOÇÕES -->
+    <section class="page" id="page-promos">
+      <div class="page-header"><h2>Promoções</h2><p>Slides do carrossel principal</p></div>
+      <button class="btn btn-primary btn-block" onclick="openPromoForm()">+ Nova Promoção</button>
+      <div id="promosList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section class="page" id="page-testimonials">
+      <div class="page-header"><h2>Depoimentos</h2><p>O que os clientes dizem</p></div>
+      <button class="btn btn-primary btn-block" onclick="openTestimonialForm()">+ Novo Depoimento</button>
+      <div id="testimonialsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="page" id="page-faq">
+      <div class="page-header"><h2>FAQ</h2><p>Perguntas frequentes do site</p></div>
+      <button class="btn btn-primary btn-block" onclick="openFaqForm()">+ Nova Pergunta</button>
+      <div id="faqList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </section>
+
+    <!-- RG -->
+    <section class="page" id="page-rg">
+      <div class="page-header"><h2>Verificações +18</h2><p>Aprove ou reprove manualmente os documentos enviados</p></div>
+      <div id="rgList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </section>
+
+    <!-- CONFIG -->
+    <section class="page" id="page-settings">
+      <div class="page-header"><h2>Configurações</h2><p>Informações gerais da loja</p></div>
+      <div class="card">
+        <h3>🏪 Identidade</h3>
+        <div class="form-group"><label>Nome da loja</label><input type="text" id="setStoreName"></div>
+        <div class="form-group"><label>CNPJ</label><input type="text" id="setCnpj"></div>
+        <div class="form-group"><label>Horário de atendimento</label><input type="text" id="setHours"></div>
+      </div>
+      <div class="card">
+        <h3>💬 Suporte</h3>
+        <div class="form-group"><label>WhatsApp (link completo)</label><input type="text" id="setWhatsapp" placeholder="https://wa.me/55..."></div>
+        <div class="form-group"><label>Telegram (link completo)</label><input type="text" id="setTelegram" placeholder="https://t.me/..."></div>
+      </div>
+      <div class="card">
+        <h3>🔐 Segurança</h3>
+        <div class="form-group"><label>Nova senha do painel</label><input type="text" id="setNewPass" placeholder="Deixe vazio para manter"></div>
+        <button class="btn btn-primary btn-block" onclick="saveSettings()">Salvar Configurações</button>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--error-color)">⚠️ Zona de perigo</h3>
+        <button class="btn btn-danger btn-block" onclick="resetAll()">Apagar Todos os Dados</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Início
+    </button>
+    <button class="nav-item" data-tab="products" onclick="switchTab('products')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Produtos
+    </button>
+    <button class="nav-item" data-tab="rg" onclick="switchTab('rg')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      RG
+      <span class="nav-badge" id="rgNavBadge" style="display:none;">0</span>
+    </button>
+    <button class="nav-item" data-tab="testimonials" onclick="switchTab('testimonials')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Clientes
+    </button>
+    <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Config
+    </button>
+  </nav>
+</div>
+
+<!-- MODAL GENÉRICO -->
+<div class="modal-overlay" id="modal"><div class="modal-content" id="modalContent"></div></div>
+
+<!-- MODAL VER RG -->
+<div class="modal-overlay" id="rgViewModal">
+  <div class="modal-content">
+    <div class="modal-header"><h2>Documento</h2><button class="close-btn" onclick="document.getElementById('rgViewModal').classList.remove('active')">&times;</button></div>
+    <div id="rgViewBody"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ================= STORAGE ================= */
+const KEYS={
+  SETTINGS:'js_settings',
+  TESTIMONIALS:'js_testimonials',
+  PRODUCTS:'js_products',
+  PROMOS:'js_promos',
+  FAQ:'js_faq',
+  RG:'js_rg_requests',
+  ADMIN_PASS:'js_admin_pass'
+};
+
+const DEFAULT_SETTINGS={
+  storeName:'Joãozinho Store',
+  cnpj:'00.000.000/0000-00',
+  hours:'Segunda a Sexta, 09h às 18h',
+  whatsapp:'https://wa.me/5511999999999',
+  telegram:'https://t.me/suporte_joaozinho',
+  status:'active'
+};
+
+const DEFAULT_TESTIMONIALS=[
+  {id:1,text:'Comprei o IPTV Elite e a qualidade é surreal. Entrega automática e super rápida. Recomendo demais!',author:'Carlos M.',rating:5},
+  {id:2,text:'Melhor preço do mercado. O suporte no chat automático me ajudou na hora do pagamento. Site muito intuitivo.',author:'Ana Paula S.',rating:5},
+  {id:3,text:'Já é a terceira vez que compro. Nunca tive problemas. O PIX cai na hora e o produto é liberado na mesma hora.',author:'Roberto F.',rating:5}
+];
+
+const DEFAULT_PROMOS=[
+  {id:1,targetProductId:1,title:'Netflix 4K',desc:'Qualidade máxima para a família.',price:'14,90'},
+  {id:2,targetProductId:42,title:'IPTV Elite 90 dias',desc:'3 meses de estabilidade premium.',price:'59,90'},
+  {id:3,targetProductId:62,title:'Canva Pro 6 meses',desc:'Design profissional por metade do preço.',price:'18,00'}
+];
+
+const DEFAULT_FAQ=[
+  {id:1,q:'Como recebo meu produto após o pagamento?',a:'Assim que o pagamento do PIX for confirmado pelo sistema, o bot libera automaticamente os dados de acesso (e-mail e senha) aqui mesmo na tela. É tudo automático, não precisa esperar atendente.'},
+  {id:2,q:'O pagamento via PIX é seguro?',a:'Sim! Utilizamos a tecnologia oficial do Banco Central para gerar um QR Code único para a sua compra. O valor é transferido diretamente para a loja, sem intermediários.'},
+  {id:3,q:'Qual o prazo de garantia dos produtos?',a:'A garantia varia de acordo com o produto, mas geralmente é de 30 a 180 dias. Você pode conferir o prazo exato na tela de detalhes de cada produto antes de comprar.'},
+  {id:4,q:'Posso pedir reembolso se não funcionar?',a:'Sim. Se o produto apresentar algum defeito e nosso suporte não conseguir resolver, você tem até 7 dias para solicitar o reembolso, conforme o Código de Defesa do Consumidor.'},
+  {id:5,q:'Como funciona o suporte?',a:'Nosso suporte é 100% online e automatizado. Você pode usar o chat flutuante no canto inferior direito para tirar dúvidas rápidas ou falar com um atendente humano.'}
+];
+
+const DEFAULT_PRODUCTS=[
+  {id:1,cat:'filmes',name:'Netflix 4K',price:14.90,oldPrice:39.90,promo:true,desc:'Plano Premium 4K • 4 telas • 30 dias'},
+  {id:2,cat:'filmes',name:'Disney+ Padrão',price:9.90,oldPrice:27.90,promo:true,desc:'Catálogo completo Disney, Marvel e Star Wars'},
+  {id:3,cat:'filmes',name:'HBO Max',price:12.90,desc:'Séries e filmes exclusivos • 30 dias'},
+  {id:42,cat:'iptv',name:'IPTV Elite 90 dias',price:59.90,oldPrice:75.00,promo:true,desc:'3 meses de estabilidade premium'},
+  {id:62,cat:'produtividade',name:'Canva Pro 6 meses',price:18.00,oldPrice:59.90,promo:true,desc:'6 meses de Canva Pro completo'}
+];
+
+/* ================= HELPERS ================= */
+const $=(id)=>document.getElementById(id);
+const load=(k,fb)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=(s)=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escAttr=esc;
+
+function toast(msg,type='success'){
+  const c=$('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  const svg=type==='error'
+    ?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    :'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  t.innerHTML=`<div class="toast-icon ${type==='error'?'error':''}">${svg}</div><span>${esc(msg)}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2800);
+}
+
+/* ================= LOGIN ================= */
+function tryLogin(){
+  const pass=$('loginPassword').value;
+  const correct=localStorage.getItem(KEYS.ADMIN_PASS)||'joao23M';
+  if(pass===correct){
+    sessionStorage.setItem('js_admin_logged','true');
+    $('loginError').textContent='';
+    showApp();
+  }else{
+    $('loginError').textContent='Senha incorreta';
+    $('loginPassword').value='';
+  }
+}
+function logout(){
+  sessionStorage.removeItem('js_admin_logged');
+  location.reload();
+}
+function showApp(){
+  $('loginScreen').style.display='none';
+  $('appScreen').style.display='block';
+  initApp();
+}
+
+/* ================= THEME ================= */
+function toggleTheme(){
+  document.body.classList.toggle('dark-theme');
+  const isDark=document.body.classList.contains('dark-theme');
+  localStorage.setItem('theme',isDark?'dark':'light');
+  updateThemeIcon(isDark);
+}
+function updateThemeIcon(isDark){
+  const icon=$('themeIcon');
+  if(!icon)return;
+  icon.innerHTML=isDark
+    ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark-theme');
+
+/* ================= NAV ================= */
+function switchTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+tab).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ================= INIT ================= */
+function initApp(){
+  updateThemeIcon(document.body.classList.contains('dark-theme'));
+  ensureDefaults();
+  renderAll();
+}
+function ensureDefaults(){
+  if(!localStorage.getItem(KEYS.SETTINGS))save(KEYS.SETTINGS,DEFAULT_SETTINGS);
+  if(!localStorage.getItem(KEYS.TESTIMONIALS))save(KEYS.TESTIMONIALS,DEFAULT_TESTIMONIALS);
+  if(!localStorage.getItem(KEYS.PROMOS))save(KEYS.PROMOS,DEFAULT_PROMOS);
+  if(!localStorage.getItem(KEYS.FAQ))save(KEYS.FAQ,DEFAULT_FAQ);
+  if(!localStorage.getItem(KEYS.PRODUCTS))save(KEYS.PRODUCTS,DEFAULT_PRODUCTS);
+  if(!localStorage.getItem(KEYS.RG))save(KEYS.RG,[]);
+}
+function renderAll(){
+  renderDashboard();
+  renderProducts();
+  renderPromos();
+  renderTestimonials();
+  renderFaq();
+  renderRg();
+  loadSettingsForm();
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  const products=load(KEYS.PRODUCTS,[]);
+  const promos=load(KEYS.PROMOS,[]);
+  const testi=load(KEYS.TESTIMONIALS,[]);
+  const rg=load(KEYS.RG,[]);
+  const pending=rg.filter(r=>r.status==='pending');
+  $('statProducts').textContent=products.length;
+  $('statPromos').textContent=promos.length;
+  $('statTestimonials').textContent=testi.length;
+  $('statRgPending').textContent=pending.length;
+  const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
+  $('setStatus').value=s.status||'active';
+
+  // Badges
+  const tabBadge=$('rgTabBadge'), navBadge=$('rgNavBadge');
+  if(pending.length>0){
+    tabBadge.textContent=pending.length;tabBadge.style.display='flex';
+    navBadge.textContent=pending.length;navBadge.style.display='flex';
+  }else{
+    tabBadge.style.display='none';navBadge.style.display='none';
+  }
+}
+function saveStatusQuick(){
+  const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
+  s.status=$('setStatus').value;
+  save(KEYS.SETTINGS,s);
+  toast('Status atualizado');
+}
+
+/* ================= PRODUTOS ================= */
+function renderProducts(){
+  const list=load(KEYS.PRODUCTS,[]);
+  const el=$('productsList');
+  if(list.length===0){el.innerHTML=`<div class="empty-state"><div class="icon-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div>Nenhum produto cadastrado</div></div>`;return}
+  el.innerHTML=list.map(p=>`
+    <div class="item">
+      <div class="item-header">
+        <div style="flex:1">
+          <div class="item-title">${esc(p.name)}</div>
+          <div class="item-sub">📁 ${esc(p.cat)} • 💰 R$ ${Number(p.price).toFixed(2).replace('.',',')}${p.oldPrice?` <span style="text-decoration:line-through;opacity:.6">R$ ${Number(p.oldPrice).toFixed(2).replace('.',',')}</span>`:''}</div>
+          <div class="item-sub">${esc(p.desc||'')}</div>
+        </div>
+        ${p.promo?'<span class="tag approved">PROMO</span>':''}
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+function openProductForm(product){
+  const isEdit=!!product;
+  const p=product||{id:Date.now(),cat:'filmes',name:'',price:0,oldPrice:'',promo:false,desc:''};
+  $('modalContent').innerHTML=`
+    <div class="modal-header"><h2>${isEdit?'Editar':'Novo'} Produto</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Nome do produto</label><input type="text" id="pName" value="${escAttr(p.name)}" placeholder="Ex: Netflix 4K"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Categoria</label>
+        <select id="pCat">
+          <option value="filmes" ${p.cat==='filmes'?'selected':''}>Filmes e Séries</option>
+          <option value="futebol" ${p.cat==='futebol'?'selected':''}>Futebol</option>
+          <option value="iptv" ${p.cat==='iptv'?'selected':''}>IPTV</option>
+          <option value="produtividade" ${p.cat==='produtividade'?'selected':''}>Produtividade</option>
+          <option value="musica" ${p.cat==='musica'?'selected':''}>Música</option>
+          <option value="kids" ${p.cat==='kids'?'selected':''}>Kids</option>
+          <option value="adulto" ${p.cat==='adulto'?'selected':''}>Adulto +18</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" id="pPrice" value="${p.price}"></div>
+    </div>
+    <div class="form-group"><label>Preço antigo (opcional)</label><input type="number" step="0.01" id="pOld" value="${p.oldPrice||''}"></div>
+    <div class="form-group"><label>Descrição</label><textarea id="pDesc" rows="3">${esc(p.desc||'')}</textarea></div>
+    <div class="check-row"><input type="checkbox" id="pPromo" ${p.promo?'checked':''}><label for="pPromo" style="margin:0">Marcar como promoção</label></div>
+    <button class="btn btn-primary btn-block" onclick="saveProduct(${p.id},${isEdit})">💾 Salvar</button>
+  `;
+  $('modal').classList.add('active');
+}
+function editProduct(id){const p=load(KEYS.PRODUCTS,[]).find(x=>x.id===id);if(p)openProductForm(p)}
+function openProductFormNew(){openProductForm()}
+function saveProduct(id,isEdit){
+  const name=$('pName').value.trim();
+  const cat=$('pCat').value;
+  const price=parseFloat($('pPrice').value);
+  const oldPrice=parseFloat($('pOld').value)||null;
+  const desc=$('pDesc').value.trim();
+  const promo=$('pPromo').checked;
+  if(!name||isNaN(price)){toast('Preencha nome e preço', 'error');return}
+  const list=load(KEYS.PRODUCTS,[]);
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={...list[i],name,cat,price,oldPrice,desc,promo}}
+  else list.push({id,name,cat,price,oldPrice,desc,promo});
+  save(KEYS.PRODUCTS,list);
+  closeModal();renderProducts();renderDashboard();toast(isEdit?'Produto atualizado':'Produto adicionado');
+}
+function deleteProduct(id){
+  if(!confirm('Excluir este produto?'))return;
+  save(KEYS.PRODUCTS,load(KEYS.PRODUCTS,[]).filter(p=>p.id!==id));
+  renderProducts();renderDashboard();toast('Produto excluído');
+}
+
+/* ================= PROMOS ================= */
+function renderPromos(){
+  const list=load(KEYS.PROMOS,[]);
+  const el=$('promosList');
+  if(list.length===0){el.innerHTML=`<div class="empty-state"><div>Nenhuma promoção</div></div>`;return}
+  el.innerHTML=list.map(p=>`
+    <div class="item">
+      <div class="item-header">
+        <div style="flex:1">
+          <div class="item-title">${esc(p.title)}</div>
+          <div class="item-sub">${esc(p.desc||'')}</div>
+          <div class="item-sub">🎯 Produto ID: ${p.targetProductId} • 💰 R$ ${esc(p.price)}</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editPromo(${p.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePromo(${p.id})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+function openPromoForm(promo){
+  const isEdit=!!promo;
+  const p=promo||{id:Date.now(),title:'',desc:'',price:'',targetProductId:1};
+  $('modalContent').innerHTML=`
+    <div class="modal-header"><h2>${isEdit?'Editar':'Nova'} Promoção</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Título (aparece grande)</label><input type="text" id="prTitle" value="${escAttr(p.title)}" placeholder="Netflix 4K"></div>
+    <div class="form-group"><label>Descrição curta</label><textarea id="prDesc" rows="2">${esc(p.desc||'')}</textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Preço</label><input type="text" id="prPrice" value="${escAttr(p.price)}" placeholder="14,90"></div>
+      <div class="form-group"><label>ID do produto</label><input type="number" id="prTarget" value="${p.targetProductId}"></div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="savePromo(${p.id},${isEdit})">💾 Salvar</button>
+  `;
+  $('modal').classList.add('active');
+}
+function editPromo(id){const p=load(KEYS.PROMOS,[]).find(x=>x.id===id);if(p)openPromoForm(p)}
+function openPromoFormNew(){openPromoForm()}
+function savePromo(id,isEdit){
+  const title=$('prTitle').value.trim();
+  const desc=$('prDesc').value.trim();
+  const price=$('prPrice').value.trim();
+  const targetProductId=parseInt($('prTarget').value);
+  if(!title||!price){toast('Preencha título e preço','error');return}
+  const list=load(KEYS.PROMOS,[]);
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={...list[i],title,desc,price,targetProductId}}
+  else list.push({id,title,desc,price,targetProductId});
+  save(KEYS.PROMOS,list);
+  closeModal();renderPromos();renderDashboard();toast('Promoção salva');
+}
+function deletePromo(id){
+  if(!confirm('Excluir?'))return;
+  save(KEYS.PROMOS,load(KEYS.PROMOS,[]).filter(p=>p.id!==id));
+  renderPromos();renderDashboard();toast('Promoção excluída');
+}
+
+/* ================= TESTIMONIALS ================= */
+function renderTestimonials(){
+  const list=load(KEYS.TESTIMONIALS,[]);
+  const el=$('testimonialsList');
+  if(list.length===0){el.innerHTML=`<div class="empty-state"><div>Nenhum depoimento</div></div>`;return}
+  el.innerHTML=list.map(t=>`
+    <div class="item">
+      <div class="item-header">
+        <div style="flex:1">
+          <div class="item-title">${esc(t.author)}</div>
+          <div class="item-sub" style="color:var(--star-color);font-size:14px">${'★'.repeat(t.rating||5)}${'☆'.repeat(5-(t.rating||5))}</div>
+          <div class="item-sub">"${esc(t.text)}"</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editTestimonial(${t.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTestimonial(${t.id})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+function openTestimonialForm(t){
+  const isEdit=!!t;
+  const obj=t||{id:Date.now(),text:'',author:'',rating:5};
+  $('modalContent').innerHTML=`
+    <div class="modal-header"><h2>${isEdit?'Editar':'Novo'} Depoimento</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Nome do cliente</label><input type="text" id="tAuthor" value="${escAttr(obj.author)}" placeholder="Ex: Carlos M."></div>
+    <div class="form-group"><label>Depoimento</label><textarea id="tText" rows="4" placeholder="O que o cliente disse...">${esc(obj.text)}</textarea></div>
+    <div class="form-group"><label>Avaliação (1 a 5 estrelas)</label><input type="number" min="1" max="5" id="tRating" value="${obj.rating}"></div>
+    <button class="btn btn-primary btn-block" onclick="saveTestimonial(${obj.id},${isEdit})">💾 Salvar</button>
+  `;
+  $('modal').classList.add('active');
+}
+function editTestimonial(id){const t=load(KEYS.TESTIMONIALS,[]).find(x=>x.id===id);if(t)openTestimonialForm(t)}
+function openTestimonialFormNew(){openTestimonialForm()}
+function saveTestimonial(id,isEdit){
+  const author=$('tAuthor').value.trim();
+  const text=$('tText').value.trim();
+  const rating=Math.max(1,Math.min(5,parseInt($('tRating').value)||5));
+  if(!author||!text){toast('Preencha todos os campos','error');return}
+  const list=load(KEYS.TESTIMONIALS,[]);
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={...list[i],author,text,rating}}
+  else list.push({id,author,text,rating});
+  save(KEYS.TESTIMONIALS,list);
+  closeModal();renderTestimonials();renderDashboard();toast('Depoimento salvo');
+}
+function deleteTestimonial(id){
+  if(!confirm('Excluir?'))return;
+  save(KEYS.TESTIMONIALS,load(KEYS.TESTIMONIALS,[]).filter(t=>t.id!==id));
+  renderTestimonials();renderDashboard();toast('Excluído');
+}
+
+/* ================= FAQ ================= */
+function renderFaq(){
+  const list=load(KEYS.FAQ,[]);
+  const el=$('faqList');
+  if(list.length===0){el.innerHTML=`<div class="empty-state"><div>Nenhuma pergunta</div></div>`;return}
+  el.innerHTML=list.map(f=>`
+    <div class="item">
+      <div class="item-header">
+        <div style="flex:1">
+          <div class="item-title">${esc(f.q)}</div>
+          <div class="item-sub">${esc(f.a)}</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editFaq(${f.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFaq(${f.id})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+function openFaqForm(f){
+  const isEdit=!!f;
+  const obj=f||{id:Date.now(),q:'',a:''};
+  $('modalContent').innerHTML=`
+    <div class="modal-header"><h2>${isEdit?'Editar':'Nova'} Pergunta</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Pergunta</label><input type="text" id="fQ" value="${escAttr(obj.q)}"></div>
+    <div class="form-group"><label>Resposta</label><textarea id="fA" rows="4">${esc(obj.a)}</textarea></div>
+    <button class="btn btn-primary btn-block" onclick="saveFaq(${obj.id},${isEdit})">💾 Salvar</button>
+  `;
+  $('modal').classList.add('active');
+}
+function editFaq(id){const f=load(KEYS.FAQ,[]).find(x=>x.id===id);if(f)openFaqForm(f)}
+function openFaqFormNew(){openFaqForm()}
+function saveFaq(id,isEdit){
+  const q=$('fQ').value.trim();
+  const a=$('fA').value.trim();
+  if(!q||!a){toast('Preencha pergunta e resposta','error');return}
+  const list=load(KEYS.FAQ,[]);
+  if(isEdit){const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]={...list[i],q,a}}
+  else list.push({id,q,a});
+  save(KEYS.FAQ,list);
+  closeModal();renderFaq();toast('FAQ salvo');
+}
+function deleteFaq(id){
+  if(!confirm('Excluir?'))return;
+  save(KEYS.FAQ,load(KEYS.FAQ,[]).filter(f=>f.id!==id));
+  renderFaq();toast('Excluído');
+}
+
+/* ================= RG ================= */
+function renderRg(){
+  const list=load(KEYS.RG,[]).slice().reverse();
+  const el=$('rgList');
+  if(list.length===0){
+    el.innerHTML=`<div class="empty-state"><div class="icon-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div>Nenhuma verificação recebida</div></div>`;
+    return;
+  }
+  el.innerHTML=list.map(r=>`
+    <div class="item">
+      <div class="item-header">
+        <div style="flex:1">
+          <div class="item-title">${esc(r.userName||'Usuário')}</div>
+          <div class="item-sub">ID: ${r.userId||'—'} • ${esc(r.date||'')}</div>
+          <div class="item-sub" style="margin-top:6px"><span class="tag ${r.status}">${labelStatus(r.status)}</span></div>
+        </div>
+      </div>
+      <div class="rg-photos">
+        <div class="rg-photo" onclick="viewRg('${r.id}','front')">${r.front?`<img src="${r.front}">`:'Frente'}</div>
+        <div class="rg-photo" onclick="viewRg('${r.id}','back')">${r.back?`<img src="${r.back}">`:'Verso'}</div>
+      </div>
+      ${r.status==='pending'?`
+        <div class="item-actions">
+          <button class="btn btn-success btn-sm" onclick="approveRg('${r.id}')">✓ Aprovar</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectRg('${r.id}')">✗ Reprovar</button>
+        </div>`:`
+        <div class="item-actions">
+          <button class="btn btn-warning btn-sm" onclick="resetRg('${r.id}')">↺ Reabrir</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteRg('${r.id}')">🗑 Excluir</button>
+        </div>`}
+    </div>`).join('');
+}
+function labelStatus(s){return s==='approved'?'✓ Aprovado':s==='rejected'?'✗ Reprovado':'⏳ Pendente'}
+function approveRg(id){
+  const list=load(KEYS.RG,[]);
+  const r=list.find(x=>x.id===id);
+  if(!r)return;
+  r.status='approved';r.reviewedAt=Date.now();
+  save(KEYS.RG,list);
+  renderRg();renderDashboard();toast('RG aprovado');
+}
+function rejectRg(id){
+  const list=load(KEYS.RG,[]);
+  const r=list.find(x=>x.id===id);
+  if(!r)return;
+  r.status='rejected';r.reviewedAt=Date.now();
+  save(KEYS.RG,list);
+  renderRg();renderDashboard();toast('RG reprovado');
+}
+function resetRg(id){
+  const list=load(KEYS.RG,[]);
+  const r=list.find(x=>x.id===id);
+  if(!r)return;
+  r.status='pending';
+  save(KEYS.RG,list);
+  renderRg();renderDashboard();toast('Reaberto');
+}
+function deleteRg(id){
+  if(!confirm('Excluir este pedido?'))return;
+  save(KEYS.RG,load(KEYS.RG,[]).filter(r=>r.id!==id));
+  renderRg();renderDashboard();toast('Excluído');
+}
+function viewRg(id,side){
+  const r=load(KEYS.RG,[]).find(x=>x.id===id);
+  if(!r)return;
+  const img=side==='front'?r.front:r.back;
+  $('rgViewBody').innerHTML=img
+    ?`<img src="${img}" style="width:100%;border-radius:12px;display:block;">`
+    :`<div style="text-align:center;padding:40px;color:var(--text-secondary)">Imagem indisponível</div>`;
+  $('rgViewModal').classList.add('active');
+}
+
+/* ================= SETTINGS ================= */
+function loadSettingsForm(){
+  const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
+  $('setStoreName').value=s.storeName||'';
+  $('setCnpj').value=s.cnpj||'';
+  $('setHours').value=s.hours||'';
+  $('setWhatsapp').value=s.whatsapp||'';
+  $('setTelegram').value=s.telegram||'';
+  $('setStatus').value=s.status||'active';
+}
+function saveSettings(){
+  const s=load(KEYS.SETTINGS,DEFAULT_SETTINGS);
+  s.storeName=$('setStoreName').value.trim();
+  s.cnpj=$('setCnpj').value.trim();
+  s.hours=$('setHours').value.trim();
+  s.whatsapp=$('setWhatsapp').value.trim();
+  s.telegram=$('setTelegram').value.trim();
+  s.status=$('setStatus').value;
+  save(KEYS.SETTINGS,s);
+
+  const newPass=$('setNewPass').value.trim();
+  if(newPass){localStorage.setItem(KEYS.ADMIN_PASS,newPass);$('setNewPass').value='';toast('Senha atualizada')}
+  toast('Configurações salvas');
+}
+function resetAll(){
+  if(!confirm('Isso apagará TODOS os dados salvos. Tem certeza?'))return;
+  if(!confirm('ÚLTIMA confirmação: apagar tudo mesmo?'))return;
+  Object.values(KEYS).forEach(k=>localStorage.removeItem(k));
+  toast('Dados resetados');
+  setTimeout(()=>location.reload(),800);
+}
+
+/* ================= MODAL ================= */
+function closeModal(){$('modal').classList.remove('active');$('modalContent').innerHTML=''}
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active');
+});
+
+/* ================= EXPORT GLOBALS ================= */
+window.openProductForm=openProductFormNew;
+window.openPromoForm=openPromoFormNew;
+window.openTestimonialForm=openTestimonialFormNew;
+window.openFaqForm=openFaqFormNew;
+
+/* ================= AUTO REFRESH RG ================= */
+setInterval(()=>{
+  if($('appScreen').style.display==='none')return;
+  renderDashboard();
+  if($('page-rg').classList.contains('active'))renderRg();
+},3000);
+
+/* ================= BOOT ================= */
+if(sessionStorage.getItem('js_admin_logged')==='true'){
+  showApp();
+}else{
+  $('loginScreen').style.display='flex';
+}
+</script>
+</body>
+</html>
